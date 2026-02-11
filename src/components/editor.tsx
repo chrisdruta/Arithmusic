@@ -7,26 +7,11 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import { useComposition } from '../context/CompositionContext';
 import EditorControls from './editor/editor-controls';
 import EditorPanel from './editor/editor-panel';
 import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
-import type { SelectedSegment, Segment, Timeline, TimelineOptions } from '../types';
-
-interface EditorProps {
-  animateGraph: () => void;
-  timelines: Timeline[];
-  selectedSegment: SelectedSegment;
-  onSegmentSelection: (row: number, col: number) => void;
-  onSegmentRearrange: (rowIndex: number, src: number, dest: number, segments: Segment[]) => void;
-  onAddTrack: () => void;
-  onDeleteTrack: (rowIndex: number) => void;
-  onTrackOptionChange: (index: number, field: string, value: TimelineOptions['wave'] | string | null) => void;
-  onTrackDataChange: (col: number, row: number, field: 'title' | 'expression' | 'length' | 'volume', value: string | number) => void;
-  onAddSegment: (rowIndex: number) => void;
-  onDeleteSegment: () => void;
-  toggleModal: (kind: 'load' | 'save' | 'settings' | 'alert') => void;
-}
 
 const accordionSx = {
   width: '100%',
@@ -41,24 +26,13 @@ const detailsSx = {
   padding: 0,
 };
 
-export default function Editor({
-  animateGraph,
-  timelines,
-  selectedSegment,
-  onSegmentSelection,
-  onSegmentRearrange,
-  onAddTrack,
-  onDeleteTrack,
-  onTrackOptionChange,
-  onTrackDataChange,
-  onAddSegment,
-  onDeleteSegment,
-  toggleModal,
-}: EditorProps) {
+export default function Editor() {
+  const { state, dispatch } = useComposition();
+  const { timelines, selectedSegment } = state;
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const animate = () => {
-    timerRef.current = setInterval(animateGraph, 16);
+    timerRef.current = setInterval(() => dispatch({ type: 'ANIMATE_GRAPH' }), 16);
   };
   const stopAnimate = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -87,38 +61,17 @@ export default function Editor({
       </AccordionSummary>
       <AccordionDetails sx={detailsSx}>
         <div className="Editor">
-          <EditorControls onAddTrack={onAddTrack} toggleModal={toggleModal} />
+          <EditorControls />
           <div className="EditorTimelineContainer">
-            {timelines.map((tl, rowIndex) => (
+            {timelines.map((_tl, rowIndex) => (
               <div key={rowIndex} className="EditorTimelineRow">
-                <TrackOptions
-                  options={tl.options}
-                  rowIndex={rowIndex}
-                  onTrackOptionChange={onTrackOptionChange}
-                  onDeleteTrack={onDeleteTrack}
-                />
-                <TrackTimeline
-                  segments={tl.segments}
-                  rowIndex={rowIndex}
-                  selectedSegment={selectedSegment}
-                  onSegmentSelection={onSegmentSelection}
-                  onSegmentRearrange={onSegmentRearrange}
-                  onAddSegment={onAddSegment}
-                />
+                <TrackOptions rowIndex={rowIndex} />
+                <TrackTimeline rowIndex={rowIndex} />
               </div>
             ))}
           </div>
           {selectedSegmentData ? (
-            <EditorPanel
-              title={selectedSegmentData.title}
-              expression={selectedSegmentData.expression}
-              length={selectedSegmentData.length}
-              volume={selectedSegmentData.volume}
-              onTrackDataChange={onTrackDataChange}
-              onDeleteSegment={onDeleteSegment}
-              timelines={timelines}
-              selectedSegment={selectedSegment}
-            />
+            <EditorPanel />
           ) : (
             <div className="EmptyEditorPanel" />
           )}

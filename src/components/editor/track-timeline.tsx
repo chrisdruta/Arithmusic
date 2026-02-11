@@ -1,7 +1,8 @@
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
 import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import type { Segment, SelectedSegment } from '../../types';
+import type { Segment } from '../../types';
+import { useComposition } from '../../context/CompositionContext';
 
 function reorder(list: Segment[], startIndex: number, endIndex: number): Segment[] {
   const result = Array.from(list);
@@ -42,27 +43,21 @@ function getListStyle(isDraggingOver: boolean): React.CSSProperties {
   };
 }
 
-interface TrackTimelineProps {
-  segments: Segment[];
-  rowIndex: number;
-  selectedSegment: SelectedSegment;
-  onSegmentSelection: (row: number, col: number) => void;
-  onSegmentRearrange: (rowIndex: number, src: number, dest: number, segments: Segment[]) => void;
-  onAddSegment: (rowIndex: number) => void;
-}
+export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
+  const { state, dispatch } = useComposition();
+  const segments = state.timelines[rowIndex].segments;
+  const selectedSegment = state.selectedSegment;
 
-export default function TrackTimeline({
-  segments,
-  rowIndex,
-  selectedSegment,
-  onSegmentSelection,
-  onSegmentRearrange,
-  onAddSegment,
-}: TrackTimelineProps) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const reordered = reorder(segments, result.source.index, result.destination.index);
-    onSegmentRearrange(rowIndex, result.source.index, result.destination.index, reordered);
+    dispatch({
+      type: 'SEGMENT_REARRANGE',
+      rowIndex,
+      sourceCol: result.source.index,
+      destCol: result.destination.index,
+      segments: reordered,
+    });
   };
 
   return (
@@ -86,7 +81,7 @@ export default function TrackTimeline({
                       provided.draggableProps.style as React.CSSProperties | undefined,
                       selectedSegment.row === rowIndex && selectedSegment.col === colIndex
                     )}
-                    onClick={() => onSegmentSelection(rowIndex, colIndex)}
+                    onClick={() => dispatch({ type: 'SEGMENT_SELECT', row: rowIndex, col: colIndex })}
                   >
                     {segment.title.value}
                   </div>
@@ -95,7 +90,7 @@ export default function TrackTimeline({
             ))}
             {provided.placeholder}
             <div className="verticalDivider" />
-            <IconButton onClick={() => onAddSegment(rowIndex)} size="small">
+            <IconButton onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })} size="small">
               <AddIcon />
             </IconButton>
           </div>

@@ -1,6 +1,6 @@
 import { Box, Button, Divider, List, ListItem, ListItemText, Modal, Typography } from '@mui/material';
 import { modalStyle } from '../modals';
-import type { CompositionErrors } from '../../types';
+import { useComposition } from '../../context/CompositionContext';
 
 const errorKeyMap: Record<string, string> = {
   fs: 'Sampling frequency',
@@ -10,13 +10,10 @@ const errorKeyMap: Record<string, string> = {
   length: 'Length',
 };
 
-interface AlertModalProps {
-  open: boolean;
-  errors: CompositionErrors | null;
-  toggleModal: (kind: 'alert') => void;
-}
+export default function AlertModal() {
+  const { state, dispatch } = useComposition();
+  const errors = state.compositionErrors;
 
-export default function AlertModal({ open, errors, toggleModal }: AlertModalProps) {
   const listItems: React.ReactNode[] = [];
 
   if (errors) {
@@ -46,7 +43,7 @@ export default function AlertModal({ open, errors, toggleModal }: AlertModalProp
   }
 
   return (
-    <Modal open={open}>
+    <Modal open={state.showingModals.alert}>
       <Box sx={modalStyle}>
         <Typography variant="h5">Composition Errors</Typography>
         <br />
@@ -56,7 +53,7 @@ export default function AlertModal({ open, errors, toggleModal }: AlertModalProp
         <List sx={{ width: '80%' }}>{listItems}</List>
         <br />
         <div className="modalActions">
-          <Button variant="contained" onClick={() => toggleModal('alert')}>
+          <Button variant="contained" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
             Close
           </Button>
         </div>

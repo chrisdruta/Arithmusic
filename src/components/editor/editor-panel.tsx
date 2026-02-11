@@ -1,30 +1,15 @@
 import { IconButton, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditorOutput from './editor-output';
-import type { SelectedSegment, Timeline, ValidatedField } from '../../types';
+import { useComposition } from '../../context/CompositionContext';
 
-interface EditorPanelProps {
-  title: ValidatedField;
-  expression: ValidatedField;
-  length: ValidatedField<number>;
-  volume: ValidatedField<number>;
-  onTrackDataChange: (col: number, row: number, field: 'title' | 'expression' | 'length' | 'volume', value: string) => void;
-  onDeleteSegment: () => void;
-  timelines: Timeline[];
-  selectedSegment: SelectedSegment;
-}
+export default function EditorPanel() {
+  const { state, dispatch } = useComposition();
+  const { row, col } = state.selectedSegment;
+  const segment = state.timelines[row]?.segments[col];
+  if (!segment) return null;
 
-export default function EditorPanel({
-  title,
-  expression,
-  length,
-  volume,
-  onTrackDataChange,
-  onDeleteSegment,
-  selectedSegment,
-}: EditorPanelProps) {
-  const i = selectedSegment.col;
-  const j = selectedSegment.row;
+  const { title, expression, length, volume } = segment;
 
   return (
     <div className="EditorPanel">
@@ -33,7 +18,7 @@ export default function EditorPanel({
         value={title.value}
         error={!!title.error}
         helperText={title.error}
-        onChange={(e) => onTrackDataChange(i, j, 'title', e.target.value)}
+        onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'title', value: e.target.value })}
         margin="normal"
         sx={{ width: 100 }}
       />
@@ -42,7 +27,7 @@ export default function EditorPanel({
         value={expression.value}
         error={!!expression.error}
         helperText={expression.error ? 'See output' : ''}
-        onChange={(e) => onTrackDataChange(i, j, 'expression', e.target.value)}
+        onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'expression', value: e.target.value })}
         margin="normal"
         sx={{ width: '25%' }}
       />
@@ -51,7 +36,7 @@ export default function EditorPanel({
         value={length.value}
         error={!!length.error}
         helperText={length.error}
-        onChange={(e) => onTrackDataChange(i, j, 'length', e.target.value)}
+        onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'length', value: e.target.value })}
         margin="normal"
         sx={{ width: 100 }}
       />
@@ -60,7 +45,7 @@ export default function EditorPanel({
         value={volume.value}
         error={!!volume.error}
         helperText={volume.error}
-        onChange={(e) => onTrackDataChange(i, j, 'volume', e.target.value)}
+        onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'volume', value: e.target.value })}
         margin="normal"
         sx={{ width: 90 }}
       />
@@ -68,7 +53,7 @@ export default function EditorPanel({
         output={expression.error ? expression.error : expression.value}
         error={!!expression.error}
       />
-      <IconButton onClick={onDeleteSegment}>
+      <IconButton onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
         <DeleteIcon />
       </IconButton>
     </div>

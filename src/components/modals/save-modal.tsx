@@ -1,15 +1,13 @@
 import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import { modalStyle } from '../modals';
+import { useComposition, exportCompositionJson } from '../../context/CompositionContext';
 
-interface SaveModalProps {
-  open: boolean;
-  toggleModal: (kind: 'save') => void;
-  currentComposition: string;
-}
+export default function SaveModal() {
+  const { state, dispatch } = useComposition();
+  const currentComposition = exportCompositionJson(state.timelines);
 
-export default function SaveModal({ open, toggleModal, currentComposition }: SaveModalProps) {
   return (
-    <Modal open={open}>
+    <Modal open={state.showingModals.save}>
       <Box sx={modalStyle}>
         <Typography variant="h5">Save Composition</Typography>
         <br />
@@ -35,7 +33,7 @@ export default function SaveModal({ open, toggleModal, currentComposition }: Sav
         </Button>
         <br />
         <div className="modalActions">
-          <Button variant="contained" onClick={() => toggleModal('save')}>
+          <Button variant="contained" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
             Close
           </Button>
         </div>

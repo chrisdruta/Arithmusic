@@ -2,14 +2,10 @@ import { useState, useCallback } from 'react';
 import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { modalStyle } from '../modals';
+import { useComposition, loadCompositionJson } from '../../context/CompositionContext';
 
-interface LoadModalProps {
-  open: boolean;
-  toggleModal: (kind: 'load') => void;
-  onLoadJson: (json: string) => void;
-}
-
-export default function LoadModal({ open, toggleModal, onLoadJson }: LoadModalProps) {
+export default function LoadModal() {
+  const { state, dispatch } = useComposition();
   const [text, setText] = useState('');
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -28,8 +24,13 @@ export default function LoadModal({ open, toggleModal, onLoadJson }: LoadModalPr
     multiple: false,
   });
 
+  const handleLoad = () => {
+    const error = loadCompositionJson(text, dispatch);
+    if (error) alert(error);
+  };
+
   return (
-    <Modal open={open}>
+    <Modal open={state.showingModals.load}>
       <Box sx={modalStyle}>
         <Typography variant="h5">Load Composition</Typography>
         <br />
@@ -52,10 +53,10 @@ export default function LoadModal({ open, toggleModal, onLoadJson }: LoadModalPr
         </div>
         <br />
         <div className="modalActions">
-          <Button variant="contained" sx={{ marginRight: '10px' }} onClick={() => toggleModal('load')}>
+          <Button variant="contained" sx={{ marginRight: '10px' }} onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={() => onLoadJson(text)}>
+          <Button variant="contained" onClick={handleLoad}>
             Load
           </Button>
         </div>

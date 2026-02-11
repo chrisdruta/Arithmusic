@@ -6,31 +6,14 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import TuneIcon from '@mui/icons-material/Tune';
 
-import useComposition from './hooks/useComposition';
+import { CompositionProvider, useComposition, computeErrors, exportCompositionJson } from './context/CompositionContext';
 import { SynthesizeComposition } from './api/synthesize';
 import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
 
-export default function App() {
-  const {
-    state,
-    settingsChange,
-    trackDataChange,
-    segmentSelection,
-    segmentRearrange,
-    addSegment,
-    deleteSegment,
-    trackOptionChange,
-    addTrack,
-    deleteTrack,
-    toggleModal,
-    resetSettings,
-    getCompositionErrors,
-    exportCompositionJson,
-    loadCompositionJson,
-    animateGraph,
-  } = useComposition();
+function AppContent() {
+  const { state, dispatch } = useComposition();
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioSourcesRef = useRef<AudioBufferSourceNode[]>([]);
@@ -48,13 +31,14 @@ export default function App() {
   }, []);
 
   const handlePlay = useCallback(() => {
-    const errors = getCompositionErrors();
+    const errors = computeErrors(state);
+    dispatch({ type: 'SET_ERRORS', errors });
     if (errors) {
-      toggleModal('alert');
+      dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' });
       return;
     }
 
-    const composition = exportCompositionJson();
+    const composition = exportCompositionJson(state.timelines);
     const settingsJson = JSON.stringify({
       fs: state.settings.fs.value,
       volume: state.settings.volume.value,
@@ -83,7 +67,7 @@ export default function App() {
     audioSourcesRef.current.push(audioSource);
     audioSource.connect(audioContext.destination);
     audioSource.start(0);
-  }, [state, getCompositionErrors, toggleModal, exportCompositionJson]);
+  }, [state, dispatch]);
 
   const handleStop = useCallback(() => {
     audioSourcesRef.current.forEach((source) => {
@@ -91,8 +75,6 @@ export default function App() {
     });
     audioSourcesRef.current = [];
   }, []);
-
-  const { timelines } = state;
 
   return (
     <div className="App">
@@ -102,57 +84,25 @@ export default function App() {
           <div style={{ flexGrow: 1 }} />
           <IconButton color="inherit" onClick={handlePlay}><PlayArrowIcon /></IconButton>
           <IconButton color="inherit" onClick={handleStop}><StopIcon /></IconButton>
-          <IconButton color="inherit" onClick={() => toggleModal('settings')}><TuneIcon /></IconButton>
+          <IconButton color="inherit" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}><TuneIcon /></IconButton>
         </Toolbar>
       </AppBar>
       <div className="AppContainer">
-        <Graph
-          revision={state.revision}
-          multiplier={state.settings.multiplier.value}
-          upperRange={state.settings.graphRange.value}
-          data={
-            timelines[state.selectedSegment.row]
-              ? timelines[state.selectedSegment.row].segments
-              : null
-          }
-        />
-        <Editor
-          animateGraph={animateGraph}
-          timelines={timelines}
-          selectedSegment={state.selectedSegment}
-          onSegmentSelection={segmentSelection}
-          onSegmentRearrange={segmentRearrange}
-          onAddTrack={addTrack}
-          onDeleteTrack={deleteTrack}
-          onTrackOptionChange={trackOptionChange}
-          onTrackDataChange={trackDataChange}
-          onAddSegment={addSegment}
-          onDeleteSegment={deleteSegment}
-          toggleModal={toggleModal}
-        />
-        <LoadModal
-          open={state.showingModals.load}
-          toggleModal={toggleModal}
-          onLoadJson={loadCompositionJson}
-        />
-        <SaveModal
-          open={state.showingModals.save}
-          toggleModal={toggleModal}
-          currentComposition={exportCompositionJson()}
-        />
-        <SettingsModal
-          open={state.showingModals.settings}
-          settings={state.settings}
-          toggleModal={toggleModal}
-          onChange={settingsChange}
-          resetSettings={resetSettings}
-        />
-        <AlertModal
-          open={state.showingModals.alert}
-          errors={state.compositionErrors}
-          toggleModal={toggleModal}
-        />
+        <Graph />
+        <Editor />
+        <LoadModal />
+        <SaveModal />
+        <SettingsModal />
+        <AlertModal />
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <CompositionProvider>
+      <AppContent />
+    </CompositionProvider>
   );
 }

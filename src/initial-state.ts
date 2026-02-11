@@ -1,6 +1,6 @@
 import type { AppState } from './types';
 
-const initialState: Omit<AppState, 'revision'> = {
+const initialState: Omit<AppState, 'revision' | 'nextId'> = {
   selectedSegment: { row: 0, col: 0 },
   compositionErrors: null,
   settings: {

@@ -54,4 +54,5 @@ export interface AppState {
   showingModals: ShowingModals;
   timelines: Timeline[];
   revision: number;
+  nextId: number;
 }

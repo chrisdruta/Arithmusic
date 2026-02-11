@@ -1,26 +1,13 @@
 import { Box, Button, FormControlLabel, Link, Modal, Switch, TextField, Typography } from '@mui/material';
 import { modalStyle } from '../modals';
-import type { Settings } from '../../types';
+import { useComposition } from '../../context/CompositionContext';
 
-interface SettingsModalProps {
-  open: boolean;
-  settings: Settings;
-  toggleModal: (kind: 'settings') => void;
-  onChange: (field: string, value?: string) => void;
-  resetSettings: () => void;
-}
-
-export default function SettingsModal({
-  open,
-  settings,
-  toggleModal,
-  onChange,
-  resetSettings,
-}: SettingsModalProps) {
-  const { fs, volume, multiplier, graphRange, aliasing } = settings;
+export default function SettingsModal() {
+  const { state, dispatch } = useComposition();
+  const { fs, volume, multiplier, graphRange, aliasing } = state.settings;
 
   return (
-    <Modal open={open}>
+    <Modal open={state.showingModals.settings}>
       <Box sx={modalStyle}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div className="settingsColumn">
@@ -30,7 +17,7 @@ export default function SettingsModal({
               value={volume.value}
               error={!!volume.error}
               helperText={volume.error}
-              onChange={(e) => onChange('volume', e.target.value)}
+              onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'volume', value: e.target.value })}
               margin="normal"
               sx={{ width: 139 }}
             />
@@ -39,7 +26,7 @@ export default function SettingsModal({
               value={multiplier.value}
               error={!!multiplier.error}
               helperText={multiplier.error}
-              onChange={(e) => onChange('multiplier', e.target.value)}
+              onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'multiplier', value: e.target.value })}
               margin="normal"
               sx={{ width: 250 }}
             />
@@ -48,7 +35,7 @@ export default function SettingsModal({
               value={graphRange.value}
               error={!!graphRange.error}
               helperText={graphRange.error}
-              onChange={(e) => onChange('graphRange', e.target.value)}
+              onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'graphRange', value: e.target.value })}
               margin="normal"
               sx={{ width: 173 }}
             />
@@ -57,13 +44,13 @@ export default function SettingsModal({
               value={fs.value}
               error={!!fs.error}
               helperText={fs.error}
-              onChange={(e) => onChange('fs', e.target.value)}
+              onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'fs', value: e.target.value })}
               margin="normal"
               sx={{ width: 180 }}
             />
             <FormControlLabel
               sx={{ alignSelf: 'flex-start', marginLeft: 0, marginTop: '15px' }}
-              control={<Switch checked={aliasing} onChange={() => onChange('aliasing')} />}
+              control={<Switch checked={aliasing} onChange={() => dispatch({ type: 'SETTINGS_CHANGE', field: 'aliasing' })} />}
               label="Enable Aliasing"
               labelPlacement="start"
             />
@@ -91,10 +78,10 @@ export default function SettingsModal({
 
         <br />
         <div className="modalActions">
-          <Button variant="contained" sx={{ marginRight: '10px' }} onClick={resetSettings}>
+          <Button variant="contained" sx={{ marginRight: '10px' }} onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
             Defaults
           </Button>
-          <Button variant="contained" onClick={() => toggleModal('settings')}>
+          <Button variant="contained" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
             Close
           </Button>
         </div>
