@@ -7,6 +7,3 @@ declare module 'synthesis' {
   ): Float32Array;
   export function greet(name: string): void;
 }
-
-declare module 'plotly.js-basic-dist-min';
-declare module 'react-plotly.js/factory';
