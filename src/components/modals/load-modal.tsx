@@ -1,7 +1,14 @@
 import { useState, useCallback } from 'react';
-import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
-import { modalStyle } from '../modals';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { useComposition, loadCompositionJson } from '../../context/CompositionContext';
 
 export default function LoadModal() {
@@ -30,37 +37,33 @@ export default function LoadModal() {
   };
 
   return (
-    <Modal open={state.showingModals.load}>
-      <Box sx={modalStyle}>
-        <Typography variant="h5">Load Composition</Typography>
-        <br />
-        <Typography variant="subtitle1">Paste json below</Typography>
-        <TextField
-          label="Input"
-          multiline
+    <Dialog open={state.showingModals.load} onOpenChange={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
+      <DialogContent showCloseButton={false} className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Load Composition</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">Paste json below</p>
+        <Textarea
           rows={7}
           value={text}
-          margin="normal"
-          variant="filled"
           onChange={(e) => setText(e.target.value)}
+          className="font-mono text-xs"
         />
-        <br />
-        <Typography variant="subtitle1">or</Typography>
-        <br />
-        <div {...getRootProps()} className="LoadModalFileZone">
+        <p className="text-sm text-muted-foreground">or</p>
+        <div
+          {...getRootProps()}
+          className="cursor-pointer rounded-[var(--radius)] border-2 border-dashed border-muted-foreground/30 bg-muted/50 p-5 text-center text-sm text-muted-foreground transition-colors hover:border-primary/50"
+        >
           <input {...getInputProps()} />
           <p>Drag 'n' drop a file here, or click to select file</p>
         </div>
-        <br />
-        <div className="modalActions">
-          <Button variant="contained" sx={{ marginRight: '10px' }} onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
+        <DialogFooter>
+          <Button variant="secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleLoad}>
-            Load
-          </Button>
-        </div>
-      </Box>
-    </Modal>
+          <Button onClick={handleLoad}>Load</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

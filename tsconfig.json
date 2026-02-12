@@ -17,8 +17,10 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
-      "synthesis": ["./web-assembly/pkg/synthesis.js"]
+      "synthesis": ["./web-assembly/pkg/synthesis.js"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src", "vite-env.d.ts"]

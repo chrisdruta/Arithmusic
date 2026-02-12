@@ -13,12 +13,12 @@ interface EditorOutputProps {
 
 export default function EditorOutput({ output, error }: EditorOutputProps) {
   return (
-    <div className="EditorOutput">
-      <span style={{ marginRight: 25 }}>Output:</span>
+    <div className="flex w-[30%] items-center">
+      <span className="mr-4 text-sm text-muted-foreground">Output:</span>
       {!error ? (
         <InlineMath math={generateTex(output)} />
       ) : (
-        <span className="EditorOutputError">{output}</span>
+        <span className="text-sm font-medium text-destructive">{output}</span>
       )}
     </div>
   );

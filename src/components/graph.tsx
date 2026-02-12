@@ -1,6 +1,6 @@
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist-min';
-import { SampleTrackGraph } from '../api/synthesize';
+import { SampleTrackGraph } from '../lib/synthesize';
 import { useComposition } from '../context/CompositionContext';
 
 const Plot = createPlotlyComponent(Plotly);
@@ -12,7 +12,7 @@ export default function Graph() {
 
   return (
     <Plot
-      className="Graph"
+      className="w-full min-h-0 flex-1"
       useResizeHandler
       revision={revision}
       config={{ displayModeBar: false }}
@@ -20,10 +20,19 @@ export default function Graph() {
       layout={{
         showlegend: false,
         autosize: true,
-        xaxis: { title: 'Time (s)' },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#1a1a24',
+        font: { color: '#f0f0f5' },
+        xaxis: {
+          title: 'Time (s)',
+          gridcolor: '#2a2a3a',
+          zerolinecolor: '#2a2a3a',
+        },
         yaxis: {
           title: 'Frequency (Hz)<br />&nbsp;',
           range: [0, settings.graphRange.value],
+          gridcolor: '#2a2a3a',
+          zerolinecolor: '#2a2a3a',
         },
         margin: { t: 40, l: 85, r: 50, b: 80, pad: 5 },
       }}

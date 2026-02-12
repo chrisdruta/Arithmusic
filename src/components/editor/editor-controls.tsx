@@ -1,30 +1,26 @@
-import { Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import SaveIcon from '@mui/icons-material/Save';
-import UploadIcon from '@mui/icons-material/Upload';
+import { Plus, Upload, Save } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useComposition } from '../../context/CompositionContext';
-
-const buttonSx = { backgroundColor: '#f5f5f5', fontWeight: 500 };
 
 export default function EditorControls() {
   const { dispatch } = useComposition();
 
   return (
-    <div className="EditorOptions">
-      <Button variant="contained" size="medium" sx={buttonSx} onClick={() => dispatch({ type: 'ADD_TRACK' })}>
-        Track&nbsp;<AddIcon />
+    <div className="flex w-full items-center justify-between bg-surface-alt px-2.5 pb-2.5">
+      <Button variant="secondary" size="sm" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
+        Track <Plus className="size-4" />
       </Button>
-      <div style={{ flexGrow: 1 }} />
+      <div className="flex-1" />
       <Button
-        variant="contained"
-        size="medium"
-        sx={{ ...buttonSx, marginRight: '10px' }}
+        variant="secondary"
+        size="sm"
+        className="mr-2.5"
         onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}
       >
-        Load&nbsp;<UploadIcon />
+        Load <Upload className="size-4" />
       </Button>
-      <Button variant="contained" size="medium" sx={buttonSx} onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
-        Save&nbsp;<SaveIcon />
+      <Button variant="secondary" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
+        Save <Save className="size-4" />
       </Button>
     </div>
   );

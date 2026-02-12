@@ -1,13 +1,10 @@
 import { useRef, useCallback, useEffect } from 'react';
-import './App.css';
 
-import { AppBar, Toolbar, IconButton } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import StopIcon from '@mui/icons-material/Stop';
-import TuneIcon from '@mui/icons-material/Tune';
+import { Play, Square, SlidersHorizontal } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 import { CompositionProvider, useComposition, computeErrors, exportCompositionJson } from './context/CompositionContext';
-import { SynthesizeComposition } from './api/synthesize';
+import { SynthesizeComposition } from './lib/synthesize';
 import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
@@ -77,17 +74,23 @@ function AppContent() {
   }, []);
 
   return (
-    <div className="App">
-      <AppBar position="static">
-        <Toolbar className="AppBar">
-          <span className="title">Arithmusic</span>
-          <div style={{ flexGrow: 1 }} />
-          <IconButton color="inherit" onClick={handlePlay}><PlayArrowIcon /></IconButton>
-          <IconButton color="inherit" onClick={handleStop}><StopIcon /></IconButton>
-          <IconButton color="inherit" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}><TuneIcon /></IconButton>
-        </Toolbar>
-      </AppBar>
-      <div className="AppContainer">
+    <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
+      <header className="flex items-center gap-2 bg-primary px-4 py-2">
+        <span className="font-display text-3xl font-bold tracking-tight text-primary-foreground select-none">
+          Arithmusic
+        </span>
+        <div className="flex-1" />
+        <Button variant="ghost" size="icon" onClick={handlePlay} className="text-primary-foreground hover:bg-white/15">
+          <Play className="size-5" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={handleStop} className="text-primary-foreground hover:bg-white/15">
+          <Square className="size-5" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })} className="text-primary-foreground hover:bg-white/15">
+          <SlidersHorizontal className="size-5" />
+        </Button>
+      </header>
+      <div className="flex flex-1 flex-col justify-end overflow-hidden">
         <Graph />
         <Editor />
         <LoadModal />

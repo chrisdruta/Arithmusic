@@ -1,5 +1,12 @@
-import { Box, Button, Divider, List, ListItem, ListItemText, Modal, Typography } from '@mui/material';
-import { modalStyle } from '../modals';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { useComposition } from '../../context/CompositionContext';
 
 const errorKeyMap: Record<string, string> = {
@@ -14,50 +21,43 @@ export default function AlertModal() {
   const { state, dispatch } = useComposition();
   const errors = state.compositionErrors;
 
-  const listItems: React.ReactNode[] = [];
+  const items: { key: string; text: string }[] = [];
 
   if (errors) {
     errors.settings.forEach((key, index) => {
-      listItems.push(
-        <ListItem key={`s${index}`}>
-          <ListItemText primary={`${errorKeyMap[key] ?? key} in Settings`} />
-        </ListItem>
-      );
-      if (index !== errors.settings.length - 1 || errors.editor.length) {
-        listItems.push(<Divider key={`ds${index}`} variant="middle" />);
-      }
+      items.push({ key: `s${index}`, text: `${errorKeyMap[key] ?? key} in Settings` });
     });
-
     errors.editor.forEach((err, index) => {
-      listItems.push(
-        <ListItem key={`e${index}`}>
-          <ListItemText
-            primary={`${errorKeyMap[err.key] ?? err.key} for tab titled '${err.title}' in Timeline [row ${err.row}, column ${err.col}]`}
-          />
-        </ListItem>
-      );
-      if (index !== errors.editor.length - 1) {
-        listItems.push(<Divider key={`de${index}`} variant="middle" />);
-      }
+      items.push({
+        key: `e${index}`,
+        text: `${errorKeyMap[err.key] ?? err.key} for tab titled '${err.title}' in Timeline [row ${err.row}, column ${err.col}]`,
+      });
     });
   }
 
   return (
-    <Modal open={state.showingModals.alert}>
-      <Box sx={modalStyle}>
-        <Typography variant="h5">Composition Errors</Typography>
-        <br />
-        <Typography variant="subtitle1">
+    <Dialog open={state.showingModals.alert} onOpenChange={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
+      <DialogContent showCloseButton={false} className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Composition Errors</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">
           Please fix the following errors and try again
-        </Typography>
-        <List sx={{ width: '80%' }}>{listItems}</List>
-        <br />
-        <div className="modalActions">
-          <Button variant="contained" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
+        </p>
+        <ul className="flex flex-col gap-1">
+          {items.map((item, i) => (
+            <li key={item.key}>
+              <p className="py-2 text-sm">{item.text}</p>
+              {i < items.length - 1 && <Separator />}
+            </li>
+          ))}
+        </ul>
+        <DialogFooter>
+          <Button onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
             Close
           </Button>
-        </div>
-      </Box>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

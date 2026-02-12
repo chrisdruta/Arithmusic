@@ -1,11 +1,10 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
 
 import { useComposition } from '../context/CompositionContext';
 import EditorControls from './editor/editor-controls';
@@ -13,29 +12,19 @@ import EditorPanel from './editor/editor-panel';
 import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
 
-const accordionSx = {
-  width: '100%',
-  backgroundColor: '#ffa4a2',
-  flex: 0,
-  '&.Mui-expanded': { margin: 0 },
-};
-
-const detailsSx = {
-  width: '100%',
-  backgroundColor: 'black',
-  padding: 0,
-};
-
 export default function Editor() {
   const { state, dispatch } = useComposition();
   const { timelines, selectedSegment } = state;
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [value, setValue] = useState('editor');
 
-  const animate = () => {
+  const handleValueChange = (val: string) => {
+    setValue(val);
+    // Animate graph during accordion transition
     timerRef.current = setInterval(() => dispatch({ type: 'ANIMATE_GRAPH' }), 16);
-  };
-  const stopAnimate = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeout(() => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    }, 350);
   };
 
   const selectedSegmentData =
@@ -43,40 +32,35 @@ export default function Editor() {
 
   return (
     <Accordion
-      defaultExpanded
-      sx={accordionSx}
-      slotProps={{
-        transition: {
-          onEnter: animate,
-          onEntered: stopAnimate,
-          onExit: animate,
-          onExited: stopAnimate,
-        },
-      }}
+      type="single"
+      collapsible
+      value={value}
+      onValueChange={handleValueChange}
+      className="w-full flex-none"
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography sx={{ fontSize: '1.25rem', fontWeight: 600 }}>
+      <AccordionItem value="editor" className="border-b-0">
+        <AccordionTrigger className="bg-surface-alt px-4 py-3 text-base font-semibold hover:no-underline">
           Timeline Editor
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails sx={detailsSx}>
-        <div className="Editor">
-          <EditorControls />
-          <div className="EditorTimelineContainer">
-            {timelines.map((_tl, rowIndex) => (
-              <div key={rowIndex} className="EditorTimelineRow">
-                <TrackOptions rowIndex={rowIndex} />
-                <TrackTimeline rowIndex={rowIndex} />
-              </div>
-            ))}
+        </AccordionTrigger>
+        <AccordionContent className="p-0">
+          <div className="flex w-full flex-col items-start bg-surface text-foreground">
+            <EditorControls />
+            <div className="mb-1 w-full">
+              {timelines.map((_tl, rowIndex) => (
+                <div key={rowIndex} className="mt-1 flex w-full justify-start bg-surface">
+                  <TrackOptions rowIndex={rowIndex} />
+                  <TrackTimeline rowIndex={rowIndex} />
+                </div>
+              ))}
+            </div>
+            {selectedSegmentData ? (
+              <EditorPanel />
+            ) : (
+              <div style={{ height: '15vh', paddingBottom: 5 }} />
+            )}
           </div>
-          {selectedSegmentData ? (
-            <EditorPanel />
-          ) : (
-            <div className="EmptyEditorPanel" />
-          )}
-        </div>
-      </AccordionDetails>
+        </AccordionContent>
+      </AccordionItem>
     </Accordion>
   );
 }

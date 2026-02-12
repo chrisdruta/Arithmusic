@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell.exe -Command \"cd ''c:\\\\Users\\\\Chris\\\\Documents\\\\Code\\\\arithmusic''; bunx vite build 2>&1\")"
+      "WebSearch",
+      "WebFetch(domain:posthog.com)"
     ]
   }
 }

@@ -1,5 +1,12 @@
-import { Box, Button, Modal, TextField, Typography } from '@mui/material';
-import { modalStyle } from '../modals';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { useComposition, exportCompositionJson } from '../../context/CompositionContext';
 
 export default function SaveModal() {
@@ -7,37 +14,29 @@ export default function SaveModal() {
   const currentComposition = exportCompositionJson(state.timelines);
 
   return (
-    <Modal open={state.showingModals.save}>
-      <Box sx={modalStyle}>
-        <Typography variant="h5">Save Composition</Typography>
-        <br />
-        <Typography variant="subtitle1">Copy the text below</Typography>
-        <TextField
-          label="Output"
-          multiline
-          rows={7}
-          value={currentComposition}
-          margin="normal"
-          variant="filled"
-        />
-        <br />
-        <Typography variant="subtitle1">or</Typography>
-        <Button
-          variant="contained"
-          download="composition.json"
-          target="_blank"
-          href={`data:text/json;charset=utf-8,${encodeURIComponent(currentComposition)}`}
-          sx={{ maxWidth: 200, alignSelf: 'center' }}
-        >
-          Save Json
+    <Dialog open={state.showingModals.save} onOpenChange={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
+      <DialogContent showCloseButton={false} className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Save Composition</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">Copy the text below</p>
+        <Textarea readOnly rows={7} value={currentComposition} className="font-mono text-xs" />
+        <p className="text-sm text-muted-foreground">or</p>
+        <Button asChild className="self-center">
+          <a
+            download="composition.json"
+            target="_blank"
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(currentComposition)}`}
+          >
+            Save Json
+          </a>
         </Button>
-        <br />
-        <div className="modalActions">
-          <Button variant="contained" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
+        <DialogFooter>
+          <Button variant="secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
             Close
           </Button>
-        </div>
-      </Box>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

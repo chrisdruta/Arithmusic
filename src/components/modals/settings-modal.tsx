@@ -1,5 +1,14 @@
-import { Box, Button, FormControlLabel, Link, Modal, Switch, TextField, Typography } from '@mui/material';
-import { modalStyle } from '../modals';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { FormField } from '@/components/ui/form-field';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { useComposition } from '../../context/CompositionContext';
 
 export default function SettingsModal() {
@@ -7,85 +16,80 @@ export default function SettingsModal() {
   const { fs, volume, multiplier, graphRange, aliasing } = state.settings;
 
   return (
-    <Modal open={state.showingModals.settings}>
-      <Box sx={modalStyle}>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div className="settingsColumn">
-            <Typography variant="h5">Settings</Typography>
-            <TextField
+    <Dialog open={state.showingModals.settings} onOpenChange={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
+      <DialogContent showCloseButton={false} className="sm:max-w-xl">
+        <div className="flex flex-row gap-6">
+          <div className="flex flex-1 flex-col gap-4">
+            <DialogHeader>
+              <DialogTitle>Settings</DialogTitle>
+            </DialogHeader>
+            <FormField
               label="Master volume (%)"
               value={volume.value}
-              error={!!volume.error}
-              helperText={volume.error}
+              error={volume.error}
               onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'volume', value: e.target.value })}
-              margin="normal"
-              sx={{ width: 139 }}
+              wrapperClassName="w-36"
             />
-            <TextField
-              label="Auto multipler for function input (x)"
+            <FormField
+              label="Auto multiplier for function input (x)"
               value={multiplier.value}
-              error={!!multiplier.error}
-              helperText={multiplier.error}
+              error={multiplier.error}
               onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'multiplier', value: e.target.value })}
-              margin="normal"
-              sx={{ width: 250 }}
+              wrapperClassName="w-64"
             />
-            <TextField
+            <FormField
               label="Upper graph range (Hz)"
               value={graphRange.value}
-              error={!!graphRange.error}
-              helperText={graphRange.error}
+              error={graphRange.error}
               onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'graphRange', value: e.target.value })}
-              margin="normal"
-              sx={{ width: 173 }}
+              wrapperClassName="w-44"
             />
-            <TextField
+            <FormField
               label="Sampling frequency (Hz)"
               value={fs.value}
-              error={!!fs.error}
-              helperText={fs.error}
+              error={fs.error}
               onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'fs', value: e.target.value })}
-              margin="normal"
-              sx={{ width: 180 }}
+              wrapperClassName="w-48"
             />
-            <FormControlLabel
-              sx={{ alignSelf: 'flex-start', marginLeft: 0, marginTop: '15px' }}
-              control={<Switch checked={aliasing} onChange={() => dispatch({ type: 'SETTINGS_CHANGE', field: 'aliasing' })} />}
-              label="Enable Aliasing"
-              labelPlacement="start"
-            />
+            <div className="flex items-center gap-3 mt-2">
+              <Label htmlFor="aliasing" className="text-sm">Enable Aliasing</Label>
+              <Switch
+                id="aliasing"
+                checked={aliasing}
+                onCheckedChange={() => dispatch({ type: 'SETTINGS_CHANGE', field: 'aliasing' })}
+              />
+            </div>
           </div>
-          <div className="aboutBorder">
-            <Typography variant="h6" sx={{ alignSelf: 'center' }}>
-              About Arithmusic
-            </Typography>
-            <Typography>
-              Version: 2.0.0
-              <br />
-              <Link href="https://github.com/chrisdruta/arithmusic" target="_blank">
+          <div className="flex w-56 flex-col justify-between rounded-[var(--radius)] border border-border p-4 self-center">
+            <h3 className="text-center text-lg font-semibold">About Arithmusic</h3>
+            <div className="mt-3 text-sm text-muted-foreground">
+              <p>Version: 2.0.0</p>
+              <a
+                href="https://github.com/chrisdruta/arithmusic"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
                 github.com/chrisdruta/arithmusic
-              </Link>
-              <br />
-              GPL v3.0
-            </Typography>
-            <Typography>
+              </a>
+              <p>GPL v3.0</p>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
               Made with <span role="img" style={{ fontSize: 20 }} aria-label="heart">&#10084;&#65039;</span>,
               <br />
               Chris Druta
-            </Typography>
+            </p>
           </div>
         </div>
-
-        <br />
-        <div className="modalActions">
-          <Button variant="contained" sx={{ marginRight: '10px' }} onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
+        <DialogFooter>
+          <Button variant="secondary" onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
             Defaults
           </Button>
-          <Button variant="contained" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
+          <Button onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
             Close
           </Button>
-        </div>
-      </Box>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

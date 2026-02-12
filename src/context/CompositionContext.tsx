@@ -40,7 +40,7 @@ export function computeErrors(s: AppState): CompositionErrors | null {
       value &&
       typeof value === 'object' &&
       'error' in value &&
-      (value as { error: string }).error &&
+      (value as { error: string | null }).error &&
       key !== 'graphRange'
     ) {
       settingsErrors.push(key);
@@ -51,7 +51,7 @@ export function computeErrors(s: AppState): CompositionErrors | null {
   s.timelines.forEach((timeline, rowIndex) => {
     timeline.segments.forEach((segment, colIndex) => {
       for (const [key, value] of Object.entries(segment)) {
-        if (value && typeof value === 'object' && 'error' in value && (value as { error: string }).error) {
+        if (value && typeof value === 'object' && 'error' in value && (value as { error: string | null }).error) {
           editorErrors.push({
             key,
             title: segment.title.value,
@@ -80,7 +80,7 @@ function updateSegmentField(segment: Segment, field: SegmentField, value: string
     };
   } else if (field === 'expression') {
     const strVal = String(value);
-    let error = '';
+    let error: string | null = null;
     if (strVal.length === 0) {
       error = 'Undefined';
     } else {
@@ -95,7 +95,7 @@ function updateSegmentField(segment: Segment, field: SegmentField, value: string
   } else if (field === 'length') {
     const parsedVal = parseInt(String(value));
     if (parsedVal >= 0) {
-      seg.length = { value: parsedVal, error: '' };
+      seg.length = { value: parsedVal, error: null };
     } else if (isNaN(parsedVal)) {
       seg.length = { value: segment.length.value, error: 'Not a number' };
     } else {
@@ -104,7 +104,7 @@ function updateSegmentField(segment: Segment, field: SegmentField, value: string
   } else if (field === 'volume') {
     const parsedVal = parseInt(String(value));
     if (parsedVal >= 0) {
-      seg.volume = { value: parsedVal, error: '' };
+      seg.volume = { value: parsedVal, error: null };
     } else if (isNaN(parsedVal)) {
       seg.volume = { value: segment.volume.value, error: 'Not a number' };
     } else {
@@ -127,7 +127,7 @@ function compositionReducer(state: AppState, action: Action): AppState {
 
       if (action.field === 'volume') {
         if (parsedVal >= 0) {
-          settings.volume = { value: parsedVal, error: '' };
+          settings.volume = { value: parsedVal, error: null };
         } else if (isNaN(parsedVal)) {
           settings.volume = { ...settings.volume, error: 'Not a number' };
         } else {
@@ -137,7 +137,7 @@ function compositionReducer(state: AppState, action: Action): AppState {
         if (isNaN(parsedVal)) {
           settings.multiplier = { ...settings.multiplier, error: 'Not a number' };
         } else {
-          settings.multiplier = { value: parsedVal, error: '' };
+          settings.multiplier = { value: parsedVal, error: null };
         }
       } else if (action.field === 'graphRange') {
         if (isNaN(parsedVal)) {
@@ -145,7 +145,7 @@ function compositionReducer(state: AppState, action: Action): AppState {
         } else if (parsedVal < 0) {
           settings.graphRange = { ...settings.graphRange, error: "Can't be negative" };
         } else {
-          settings.graphRange = { value: parsedVal, error: '' };
+          settings.graphRange = { value: parsedVal, error: null };
         }
       } else if (action.field === 'fs') {
         if (isNaN(parsedVal)) {
@@ -155,7 +155,7 @@ function compositionReducer(state: AppState, action: Action): AppState {
         } else if (parsedVal > 96000) {
           settings.fs = { ...settings.fs, error: 'Must be less than 96000' };
         } else {
-          settings.fs = { value: parsedVal, error: '' };
+          settings.fs = { value: parsedVal, error: null };
         }
       } else if (action.field === 'aliasing') {
         settings.aliasing = !settings.aliasing;
@@ -204,10 +204,10 @@ function compositionReducer(state: AppState, action: Action): AppState {
                 ...tl.segments,
                 {
                   id: newId,
-                  title: { value: 'New Tab', error: '' },
-                  expression: { value: '440 + 100 * x', error: '' },
-                  length: { value: 500, error: '' },
-                  volume: { value: 100, error: '' },
+                  title: { value: 'New Tab', error: null },
+                  expression: { value: '440 + 100 * x', error: null },
+                  length: { value: 500, error: null },
+                  volume: { value: 100, error: null },
                 },
               ],
             }
@@ -285,10 +285,10 @@ function compositionReducer(state: AppState, action: Action): AppState {
       const next: AppState = {
         ...state,
         settings: {
-          fs: { value: 44100, error: '' },
-          volume: { value: 10, error: '' },
-          multiplier: { value: 1, error: '' },
-          graphRange: { value: 4000, error: '' },
+          fs: { value: 44100, error: null },
+          volume: { value: 10, error: null },
+          multiplier: { value: 1, error: null },
+          graphRange: { value: 4000, error: null },
           aliasing: false,
         },
       };
@@ -402,10 +402,10 @@ export function loadCompositionJson(
 
         let seg: Segment = {
           id: segmentId,
-          title: { value: oldSegment.title, error: '' },
-          expression: { value: oldSegment.expression, error: '' },
-          length: { value: oldSegment.length, error: '' },
-          volume: { value: oldSegment.volume, error: '' },
+          title: { value: oldSegment.title, error: null },
+          expression: { value: oldSegment.expression, error: null },
+          length: { value: oldSegment.length, error: null },
+          volume: { value: oldSegment.volume, error: null },
         };
 
         seg = updateSegmentField(seg, 'title', oldSegment.title);

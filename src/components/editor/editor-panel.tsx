@@ -1,5 +1,6 @@
-import { IconButton, TextField } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FormField } from '@/components/ui/form-field';
 import EditorOutput from './editor-output';
 import { useComposition } from '../../context/CompositionContext';
 
@@ -12,50 +13,42 @@ export default function EditorPanel() {
   const { title, expression, length, volume } = segment;
 
   return (
-    <div className="EditorPanel">
-      <TextField
+    <div className="flex w-full items-center justify-around gap-3 bg-card px-4 py-3" style={{ minHeight: '15vh' }}>
+      <FormField
         label="Title"
         value={title.value}
-        error={!!title.error}
-        helperText={title.error}
+        error={title.error}
         onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'title', value: e.target.value })}
-        margin="normal"
-        sx={{ width: 100 }}
+        wrapperClassName="w-24"
       />
-      <TextField
+      <FormField
         label="Equation f(x)"
         value={expression.value}
-        error={!!expression.error}
-        helperText={expression.error ? 'See output' : ''}
+        error={expression.error ? 'See output' : null}
         onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'expression', value: e.target.value })}
-        margin="normal"
-        sx={{ width: '25%' }}
+        wrapperClassName="w-1/4"
       />
-      <TextField
+      <FormField
         label="Length (ms)"
         value={length.value}
-        error={!!length.error}
-        helperText={length.error}
+        error={length.error}
         onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'length', value: e.target.value })}
-        margin="normal"
-        sx={{ width: 100 }}
+        wrapperClassName="w-24"
       />
-      <TextField
+      <FormField
         label="Volume (%)"
         value={volume.value}
-        error={!!volume.error}
-        helperText={volume.error}
+        error={volume.error}
         onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'volume', value: e.target.value })}
-        margin="normal"
-        sx={{ width: 90 }}
+        wrapperClassName="w-[90px]"
       />
       <EditorOutput
         output={expression.error ? expression.error : expression.value}
         error={!!expression.error}
       />
-      <IconButton onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
-        <DeleteIcon />
-      </IconButton>
+      <Button variant="ghost" size="icon" onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
+        <Trash2 className="size-5" />
+      </Button>
     </div>
   );
 }

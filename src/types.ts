@@ -1,6 +1,6 @@
 export interface ValidatedField<T = string> {
   value: T;
-  error: string;
+  error: string | null;
 }
 
 export interface Segment {

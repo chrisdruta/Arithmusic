@@ -1,6 +1,6 @@
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
-import { IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { Segment } from '../../types';
 import { useComposition } from '../../context/CompositionContext';
 
@@ -19,21 +19,25 @@ function getItemStyle(
   return {
     userSelect: 'none',
     marginLeft: 5,
-    padding: 5,
+    padding: '5px 8px',
     minHeight: 16,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     alignSelf: 'center',
-    background: '#ffa4a2',
-    borderBottom: isSelected ? '2px solid #EE6E73' : '2px solid #ffa4a2',
+    borderRadius: 'var(--radius)',
+    fontSize: '0.875rem',
+    background: isSelected ? '#252533' : '#1a1a24',
+    borderBottom: isSelected ? '2px solid #00e5ff' : '2px solid transparent',
+    color: '#f0f0f5',
+    ...(isDragging ? { boxShadow: '0 0 12px rgba(0,229,255,0.3)' } : {}),
     ...draggableStyle,
   };
 }
 
 function getListStyle(isDraggingOver: boolean): React.CSSProperties {
   return {
-    background: isDraggingOver ? '#af4448' : '#ffa4a2',
+    background: isDraggingOver ? '#252533' : '#1a1a24',
     display: 'flex',
     justifyContent: 'flex-start',
     padding: 8,
@@ -89,10 +93,15 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
               </Draggable>
             ))}
             {provided.placeholder}
-            <div className="verticalDivider" />
-            <IconButton onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })} size="small">
-              <AddIcon />
-            </IconButton>
+            <div className="mx-1.5 border-r border-border self-stretch" />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })}
+              className="self-center text-muted-foreground hover:text-foreground"
+            >
+              <Plus className="size-4" />
+            </Button>
           </div>
         )}
       </Droppable>
