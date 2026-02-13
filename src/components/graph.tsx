@@ -11,20 +11,28 @@ import { useComposition } from '../context/CompositionContext';
 
 const margin = { top: 40, left: 95, right: 50, bottom: 85 };
 const fontFamily = '"Share Tech Mono", monospace';
-const lineColors = ['#33ff66', '#66ff99', '#00cc44', '#99ffbb'];
+const trackColors = [
+  '#33ff66', // green
+  '#ff5733', // coral-orange (primary)
+  '#7c5cbf', // purple (accent)
+  '#ffcc33', // gold
+];
+const dimOpacity = 0.3;
 const gridColor = '#0d2e0d';
 const bgColor = '#0a1a0a';
 const textColor = '#1a6633';
 const tickColor = '#33ff66';
 
-function Chart({ width, height }: { width: number; height: number }) {
+function Chart({ width, height, playbackTime }: { width: number; height: number; playbackTime: number | null }) {
   const { state } = useComposition();
   const { settings, timelines, selectedSegment } = state;
-  const segments = timelines[selectedSegment.row]?.segments ?? null;
 
-  const traces = useMemo(
-    () => SampleTrackGraph(segments, settings.multiplier.value) ?? [],
-    [segments, settings.multiplier.value]
+  const allTraces = useMemo(
+    () =>
+      timelines.map((timeline) =>
+        SampleTrackGraph(timeline.segments, settings.multiplier.value) ?? []
+      ),
+    [timelines, settings.multiplier.value]
   );
 
   const innerWidth = width - margin.left - margin.right;
@@ -32,8 +40,12 @@ function Chart({ width, height }: { width: number; height: number }) {
 
   if (innerWidth <= 0 || innerHeight <= 0) return null;
 
-  const xMax = traces.reduce(
-    (max, t) => Math.max(max, t.x.length > 0 ? t.x[t.x.length - 1] : 0),
+  const xMax = allTraces.reduce(
+    (max, traces) =>
+      traces.reduce(
+        (m, t) => Math.max(m, t.x.length > 0 ? t.x[t.x.length - 1] : 0),
+        max
+      ),
     0
   );
 
@@ -53,15 +65,36 @@ function Chart({ width, height }: { width: number; height: number }) {
       <Group left={margin.left} top={margin.top}>
         <GridRows scale={yScale} width={innerWidth} stroke={gridColor} />
         <GridColumns scale={xScale} height={innerHeight} stroke={gridColor} />
-        {traces.map((trace, i) => {
+        {/* Render non-selected timelines first (dimmed), then selected on top */}
+        {allTraces.map((traces, trackIdx) => {
+          if (trackIdx === selectedSegment.row) return null;
+          const color = trackColors[trackIdx % trackColors.length];
+          return traces.map((trace, segIdx) => {
+            const points = trace.x.map((xVal, j) => ({ x: xVal, y: trace.y[j] }));
+            return (
+              <LinePath
+                key={`${trackIdx}-${segIdx}`}
+                data={points}
+                x={(d) => xScale(d.x)}
+                y={(d) => yScale(d.y)}
+                stroke={color}
+                strokeWidth={1.5}
+                strokeOpacity={dimOpacity}
+                curve={curveLinear}
+              />
+            );
+          });
+        })}
+        {(allTraces[selectedSegment.row] ?? []).map((trace, segIdx) => {
+          const color = trackColors[selectedSegment.row % trackColors.length];
           const points = trace.x.map((xVal, j) => ({ x: xVal, y: trace.y[j] }));
           return (
             <LinePath
-              key={i}
+              key={`selected-${segIdx}`}
               data={points}
               x={(d) => xScale(d.x)}
               y={(d) => yScale(d.y)}
-              stroke={lineColors[i % lineColors.length]}
+              stroke={color}
               strokeWidth={2}
               curve={curveLinear}
             />
@@ -85,16 +118,73 @@ function Chart({ width, height }: { width: number; height: number }) {
           stroke={gridColor}
           tickStroke={gridColor}
         />
+        {playbackTime !== null && playbackTime >= 0 && playbackTime <= xMax && (
+          <>
+            <defs>
+              <filter id="playhead-glow" x="-50%" y="-10%" width="200%" height="120%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Soft phosphor glow layer */}
+            <line
+              x1={xScale(playbackTime)}
+              x2={xScale(playbackTime)}
+              y1={0}
+              y2={innerHeight}
+              stroke="#33ff66"
+              strokeWidth={6}
+              strokeOpacity={0.15}
+            />
+            {/* Main segmented line */}
+            <line
+              x1={xScale(playbackTime)}
+              x2={xScale(playbackTime)}
+              y1={0}
+              y2={innerHeight}
+              stroke="#33ff66"
+              strokeWidth={1.5}
+              strokeOpacity={0.9}
+              strokeDasharray="8 4"
+              filter="url(#playhead-glow)"
+            />
+            {/* Top tick mark */}
+            <line
+              x1={xScale(playbackTime) - 5}
+              x2={xScale(playbackTime) + 5}
+              y1={0}
+              y2={0}
+              stroke="#33ff66"
+              strokeWidth={2}
+              strokeOpacity={0.9}
+              filter="url(#playhead-glow)"
+            />
+            {/* Bottom tick mark */}
+            <line
+              x1={xScale(playbackTime) - 5}
+              x2={xScale(playbackTime) + 5}
+              y1={innerHeight}
+              y2={innerHeight}
+              stroke="#33ff66"
+              strokeWidth={2}
+              strokeOpacity={0.9}
+              filter="url(#playhead-glow)"
+            />
+          </>
+        )}
       </Group>
     </svg>
   );
 }
 
-export default function Graph() {
+export default function Graph({ playbackTime }: { playbackTime: number | null }) {
   return (
     <div className="lcd-screen lcd-pixel-grid m-2 min-h-0 flex-1 overflow-hidden border-2 border-[#3a3a38] rounded-sm">
       <ParentSize>
-        {({ width, height }) => <Chart width={width} height={height} />}
+        {({ width, height }) => <Chart width={width} height={height} playbackTime={playbackTime} />}
       </ParentSize>
     </div>
   );

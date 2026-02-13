@@ -20,18 +20,14 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
 
   return (
     <div className="flex items-center gap-2.5 bg-surface px-2.5 py-1">
-      {rowIndex !== 0 ? (
-        <Button
-          variant="secondary"
-          size="sm"
-          className="calc-button"
-          onClick={() => dispatch({ type: 'DELETE_TRACK', rowIndex })}
-        >
-          Track <Minus className="size-4" />
-        </Button>
-      ) : (
-        <div className="w-[100px]" />
-      )}
+      <Button
+        variant="secondary"
+        size="sm"
+        className={`calc-button ${rowIndex === 0 ? 'invisible' : ''}`}
+        onClick={() => dispatch({ type: 'DELETE_TRACK', rowIndex })}
+      >
+        Track <Minus className="size-4" />
+      </Button>
       <Input
         value={options.title}
         onChange={(e) => dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'title', value: e.target.value })}

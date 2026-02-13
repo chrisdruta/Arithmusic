@@ -5,12 +5,21 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion';
+import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 
 import { useComposition } from '../context/CompositionContext';
 import EditorControls from './editor/editor-controls';
 import EditorPanel from './editor/editor-panel';
 import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
+import type { Segment } from '../types';
+
+function reorder(list: Segment[], startIndex: number, endIndex: number): Segment[] {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+}
 
 export default function Editor() {
   const { state, dispatch } = useComposition();
@@ -25,6 +34,35 @@ export default function Editor() {
     setTimeout(() => {
       if (timerRef.current) clearInterval(timerRef.current);
     }, 350);
+  };
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const sourceRow = Number(result.source.droppableId);
+    const destRow = Number(result.destination.droppableId);
+    const sourceCol = result.source.index;
+    const destCol = result.destination.index;
+
+    if (sourceRow === destRow) {
+      if (sourceCol === destCol) return;
+      const reordered = reorder(timelines[sourceRow].segments, sourceCol, destCol);
+      dispatch({
+        type: 'SEGMENT_REARRANGE',
+        rowIndex: sourceRow,
+        sourceCol,
+        destCol,
+        segments: reordered,
+      });
+    } else {
+      dispatch({
+        type: 'SEGMENT_MOVE_CROSS_TRACK',
+        sourceRow,
+        sourceCol,
+        destRow,
+        destCol,
+      });
+    }
   };
 
   const selectedSegmentData =
@@ -45,14 +83,16 @@ export default function Editor() {
         <AccordionContent className="p-0">
           <div className="flex w-full flex-col items-start bg-surface text-foreground">
             <EditorControls />
-            <div className="mb-1 w-full">
-              {timelines.map((_tl, rowIndex) => (
-                <div key={rowIndex} className="mt-1 flex w-full justify-start bg-surface">
-                  <TrackOptions rowIndex={rowIndex} />
-                  <TrackTimeline rowIndex={rowIndex} />
-                </div>
-              ))}
-            </div>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className="mb-1 w-full">
+                {timelines.map((_tl, rowIndex) => (
+                  <div key={rowIndex} className="mt-1 flex w-full justify-start bg-surface">
+                    <TrackOptions rowIndex={rowIndex} />
+                    <TrackTimeline rowIndex={rowIndex} />
+                  </div>
+                ))}
+              </div>
+            </DragDropContext>
             {selectedSegmentData ? (
               <EditorPanel />
             ) : (

@@ -20,6 +20,7 @@ export type Action =
   | { type: 'TRACK_DATA_CHANGE'; col: number; row: number; field: SegmentField; value: string | number }
   | { type: 'SEGMENT_SELECT'; row: number; col: number }
   | { type: 'SEGMENT_REARRANGE'; rowIndex: number; sourceCol: number; destCol: number; segments: Segment[] }
+  | { type: 'SEGMENT_MOVE_CROSS_TRACK'; sourceRow: number; sourceCol: number; destRow: number; destCol: number }
   | { type: 'ADD_SEGMENT'; rowIndex: number }
   | { type: 'DELETE_SEGMENT' }
   | { type: 'TRACK_OPTION_CHANGE'; index: number; field: string; value: TimelineOptions['wave'] | string | null }
@@ -191,6 +192,23 @@ function compositionReducer(state: AppState, action: Action): AppState {
         selectedSegment.col = action.destCol;
       }
       return { ...state, timelines, selectedSegment };
+    }
+
+    case 'SEGMENT_MOVE_CROSS_TRACK': {
+      const { sourceRow, sourceCol, destRow, destCol } = action;
+      const segment = state.timelines[sourceRow].segments[sourceCol];
+      const timelines = state.timelines.map((tl, ri) => {
+        if (ri === sourceRow) {
+          return { ...tl, segments: tl.segments.filter((_, i) => i !== sourceCol) };
+        }
+        if (ri === destRow) {
+          const newSegments = [...tl.segments];
+          newSegments.splice(destCol, 0, segment);
+          return { ...tl, segments: newSegments };
+        }
+        return tl;
+      });
+      return { ...state, timelines, selectedSegment: { row: destRow, col: destCol } };
     }
 
     case 'ADD_SEGMENT': {

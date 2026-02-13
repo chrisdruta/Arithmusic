@@ -1,15 +1,7 @@
-import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { Segment } from '../../types';
 import { useComposition } from '../../context/CompositionContext';
-
-function reorder(list: Segment[], startIndex: number, endIndex: number): Segment[] {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-}
 
 function getItemStyle(
   isDragging: boolean,
@@ -58,59 +50,45 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
   const segments = state.timelines[rowIndex].segments;
   const selectedSegment = state.selectedSegment;
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    const reordered = reorder(segments, result.source.index, result.destination.index);
-    dispatch({
-      type: 'SEGMENT_REARRANGE',
-      rowIndex,
-      sourceCol: result.source.index,
-      destCol: result.destination.index,
-      segments: reordered,
-    });
-  };
-
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable" direction="horizontal">
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            style={getListStyle(snapshot.isDraggingOver)}
-            {...provided.droppableProps}
+    <Droppable droppableId={String(rowIndex)} direction="horizontal">
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          style={getListStyle(snapshot.isDraggingOver)}
+          {...provided.droppableProps}
+        >
+          {segments.map((segment, colIndex) => (
+            <Draggable key={segment.id} draggableId={segment.id} index={colIndex}>
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                  style={getItemStyle(
+                    snapshot.isDragging,
+                    provided.draggableProps.style as React.CSSProperties | undefined,
+                    selectedSegment.row === rowIndex && selectedSegment.col === colIndex
+                  )}
+                  onClick={() => dispatch({ type: 'SEGMENT_SELECT', row: rowIndex, col: colIndex })}
+                >
+                  {segment.title.value}
+                </div>
+              )}
+            </Draggable>
+          ))}
+          {provided.placeholder}
+          <div className="mx-1.5 border-r border-border self-stretch" />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })}
+            className="self-center text-muted-foreground hover:text-foreground"
           >
-            {segments.map((segment, colIndex) => (
-              <Draggable key={segment.id} draggableId={segment.id} index={colIndex}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={getItemStyle(
-                      snapshot.isDragging,
-                      provided.draggableProps.style as React.CSSProperties | undefined,
-                      selectedSegment.row === rowIndex && selectedSegment.col === colIndex
-                    )}
-                    onClick={() => dispatch({ type: 'SEGMENT_SELECT', row: rowIndex, col: colIndex })}
-                  >
-                    {segment.title.value}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-            <div className="mx-1.5 border-r border-border self-stretch" />
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })}
-              className="self-center text-muted-foreground hover:text-foreground"
-            >
-              <Plus className="size-4" />
-            </Button>
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+            <Plus className="size-4" />
+          </Button>
+        </div>
+      )}
+    </Droppable>
   );
 }

@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 import { Play, Square, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,9 +26,13 @@ const TAG_LINE = RANDOM_TAG_LINES[Math.floor(Math.random() * RANDOM_TAG_LINES.le
 function AppContent() {
   const { state, dispatch } = useComposition();
 
+  const [playbackTime, setPlaybackTime] = useState<number | null>(null);
+
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioSourcesRef = useRef<AudioBufferSourceNode[]>([]);
   const wasmRef = useRef<typeof import('synthesis') | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const playbackStartRef = useRef<number>(0);
 
   useEffect(() => {
     audioContextRef.current = new AudioContext();
@@ -39,6 +43,14 @@ function AppContent() {
       .catch((err) => {
         console.warn('WASM load failed, falling back to JS synthesis:', err);
       });
+  }, []);
+
+  const stopPlaybackAnimation = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    setPlaybackTime(null);
   }, []);
 
   const handlePlay = useCallback(() => {
@@ -78,14 +90,34 @@ function AppContent() {
     audioSourcesRef.current.push(audioSource);
     audioSource.connect(audioContext.destination);
     audioSource.start(0);
-  }, [state, dispatch]);
+
+    // Start playhead animation
+    const duration = rawBuffer.length / state.settings.fs.value;
+    playbackStartRef.current = performance.now();
+    stopPlaybackAnimation();
+
+    const animate = () => {
+      const elapsed = (performance.now() - playbackStartRef.current) / 1000;
+      if (elapsed >= duration) {
+        setPlaybackTime(null);
+        rafRef.current = null;
+        return;
+      }
+      setPlaybackTime(elapsed);
+      rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+
+    audioSource.onended = stopPlaybackAnimation;
+  }, [state, dispatch, stopPlaybackAnimation]);
 
   const handleStop = useCallback(() => {
     audioSourcesRef.current.forEach((source) => {
       try { source.stop(0); } catch { /* already stopped */ }
     });
     audioSourcesRef.current = [];
-  }, []);
+    stopPlaybackAnimation();
+  }, [stopPlaybackAnimation]);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
@@ -111,7 +143,7 @@ function AppContent() {
         </Button>
       </header>
       <div className="flex flex-1 flex-col justify-end overflow-hidden">
-        <Graph />
+        <Graph playbackTime={playbackTime} />
         <Editor />
         <LoadModal />
         <SaveModal />
