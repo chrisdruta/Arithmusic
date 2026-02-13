@@ -7,19 +7,19 @@ export default function EditorControls() {
 
   return (
     <div className="flex w-full items-center justify-between bg-surface-alt px-2.5 pb-2.5">
-      <Button variant="secondary" size="sm" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
+      <Button variant="secondary" size="sm" className="calc-button" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
         Track <Plus className="size-4" />
       </Button>
       <div className="flex-1" />
       <Button
         variant="secondary"
         size="sm"
-        className="mr-2.5"
+        className="calc-button mr-2.5"
         onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}
       >
         Load <Upload className="size-4" />
       </Button>
-      <Button variant="secondary" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
+      <Button variant="secondary" size="sm" className="calc-button" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
         Save <Save className="size-4" />
       </Button>
     </div>

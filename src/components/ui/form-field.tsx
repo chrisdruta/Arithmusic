@@ -11,17 +11,17 @@ interface FormFieldProps extends React.ComponentProps<"input"> {
 export function FormField({ label, error, wrapperClassName, className, id, ...props }: FormFieldProps) {
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, "-");
   return (
-    <div className={cn("flex flex-col gap-1.5", wrapperClassName)}>
-      <Label htmlFor={fieldId} className="text-xs text-muted-foreground">
+    <div className={cn("flex flex-col gap-2", wrapperClassName)}>
+      <Label htmlFor={fieldId} className="text-sm text-muted-foreground uppercase tracking-wider">
         {label}
       </Label>
       <Input
         id={fieldId}
-        className={cn(error && "border-destructive", className)}
+        className={cn("h-11 text-base", error && "border-destructive", className)}
         aria-invalid={!!error}
         {...props}
       />
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );
 }

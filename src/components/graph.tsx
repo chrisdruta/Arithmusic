@@ -9,12 +9,13 @@ import { curveLinear } from '@visx/curve';
 import { SampleTrackGraph } from '../lib/synthesize';
 import { useComposition } from '../context/CompositionContext';
 
-const margin = { top: 40, left: 85, right: 50, bottom: 80 };
-const lineColors = ['#00e5ff', '#ff5733', '#7c5cbf', '#4ade80'];
-const gridColor = '#2a2a3a';
-const bgColor = '#1a1a24';
-const textColor = '#8888a0';
-const tickColor = '#f0f0f5';
+const margin = { top: 40, left: 95, right: 50, bottom: 85 };
+const fontFamily = '"Share Tech Mono", monospace';
+const lineColors = ['#33ff66', '#66ff99', '#00cc44', '#99ffbb'];
+const gridColor = '#0d2e0d';
+const bgColor = '#0a1a0a';
+const textColor = '#1a6633';
+const tickColor = '#33ff66';
 
 function Chart({ width, height }: { width: number; height: number }) {
   const { state } = useComposition();
@@ -61,7 +62,7 @@ function Chart({ width, height }: { width: number; height: number }) {
               x={(d) => xScale(d.x)}
               y={(d) => yScale(d.y)}
               stroke={lineColors[i % lineColors.length]}
-              strokeWidth={1.5}
+              strokeWidth={2}
               curve={curveLinear}
             />
           );
@@ -70,16 +71,17 @@ function Chart({ width, height }: { width: number; height: number }) {
           top={innerHeight}
           scale={xScale}
           label="Time (s)"
-          labelProps={{ fill: textColor, fontSize: 13, textAnchor: 'middle', dy: 10 }}
-          tickLabelProps={{ fill: tickColor, fontSize: 11 }}
+          labelProps={{ fill: textColor, fontSize: 16, fontFamily, textAnchor: 'middle', dy: 12 }}
+          tickLabelProps={{ fill: tickColor, fontSize: 14, fontFamily }}
           stroke={gridColor}
           tickStroke={gridColor}
         />
         <AxisLeft
           scale={yScale}
-          label="Frequency (Hz)"
-          labelProps={{ fill: textColor, fontSize: 13, textAnchor: 'middle', dx: -15 }}
-          tickLabelProps={{ fill: tickColor, fontSize: 11 }}
+          label="Frequency (kHz)"
+          labelProps={{ fill: textColor, fontSize: 16, fontFamily, textAnchor: 'middle', dx: -18 }}
+          tickFormat={(v) => (Number(v) / 1000).toFixed(1)}
+          tickLabelProps={{ fill: tickColor, fontSize: 14, fontFamily }}
           stroke={gridColor}
           tickStroke={gridColor}
         />
@@ -90,7 +92,7 @@ function Chart({ width, height }: { width: number; height: number }) {
 
 export default function Graph() {
   return (
-    <div className="w-full min-h-0 flex-1">
+    <div className="lcd-screen lcd-pixel-grid m-2 min-h-0 flex-1 overflow-hidden border-2 border-[#3a3a38] rounded-sm">
       <ParentSize>
         {({ width, height }) => <Chart width={width} height={height} />}
       </ParentSize>

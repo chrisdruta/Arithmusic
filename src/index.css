@@ -4,31 +4,47 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: #0f0f13;
-  --color-foreground: #f0f0f5;
-  --color-card: #1a1a24;
-  --color-card-foreground: #f0f0f5;
-  --color-popover: #1a1a24;
-  --color-popover-foreground: #f0f0f5;
-  --color-primary: #ff5733;
+  /* Casio fx-6300G retro calculator palette */
+  --color-background: #1c1c1e;
+  --color-foreground: #c8c8c0;
+  --color-card: #0a1a0a;
+  --color-card-foreground: #33ff66;
+  --color-popover: #0a1a0a;
+  --color-popover-foreground: #33ff66;
+  --color-primary: #2255cc;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #252533;
-  --color-secondary-foreground: #f0f0f5;
-  --color-muted: #252533;
-  --color-muted-foreground: #8888a0;
-  --color-accent: #7c5cbf;
-  --color-accent-foreground: #f0f0f5;
-  --color-destructive: #ef4444;
+  --color-secondary: #2a2a2c;
+  --color-secondary-foreground: #d0d0c8;
+  --color-muted: #2a2a2c;
+  --color-muted-foreground: #808078;
+  --color-accent: #cc3333;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #cc3333;
   --color-destructive-foreground: #ffffff;
-  --color-border: #2a2a3a;
-  --color-input: #2a2a3a;
-  --color-ring: #ff5733;
-  --color-highlight: #00e5ff;
-  --color-surface: #1a1a24;
-  --color-surface-alt: #252533;
-  --radius: 0.625rem;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --color-border: #3a3a38;
+  --color-input: #3a3a38;
+  --color-ring: #2255cc;
+  --color-highlight: #33ff66;
+  --color-surface: #222224;
+  --color-surface-alt: #2c2c2e;
+
+  /* LCD-specific colors */
+  --color-lcd-bg: #0a1a0a;
+  --color-lcd-green: #33ff66;
+  --color-lcd-grid: #0d2e0d;
+  --color-lcd-dim: #1a6633;
+  --color-amber: #d4a017;
+
+  /* Boxy calculator corners */
+  --radius: 2px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+
+  /* Monospace calculator fonts */
+  --font-sans: "Share Tech Mono", "Courier New", monospace;
+  --font-display: "VT323", "Share Tech Mono", monospace;
 }
 
 * {
@@ -42,4 +58,126 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* LCD scanline overlay effect */
+.lcd-screen {
+  position: relative;
+  background-color: var(--color-lcd-bg);
+}
+.lcd-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.12) 2px,
+    rgba(0, 0, 0, 0.12) 4px
+  );
+  z-index: 1;
+}
+
+/* LCD pixel grid overlay */
+.lcd-pixel-grid::after {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.06) 0px,
+      rgba(0, 0, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.06) 0px,
+      rgba(0, 0, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+
+/* Calculator 3D raised-button effect */
+.calc-button {
+  border-radius: 2px !important;
+  border: 1px solid #444 !important;
+  border-top-color: #555 !important;
+  border-left-color: #555 !important;
+  border-bottom-color: #222 !important;
+  border-right-color: #222 !important;
+  box-shadow:
+    1px 1px 0px #111,
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 80ms ease;
+}
+.calc-button:active {
+  box-shadow:
+    0 0 0 #111,
+    inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  transform: translateY(1px);
+}
+
+/* Solar panel decorative stripe */
+.solar-panel {
+  background: repeating-linear-gradient(
+    to right,
+    #1a1a1e 0px,
+    #1a1a1e 3px,
+    #0e0e12 3px,
+    #0e0e12 4px
+  );
+  height: 8px;
+}
+
+/* LCD green caret for highlighted inputs */
+.caret-lcd-green {
+  caret-color: var(--color-lcd-green);
+}
+
+/* KaTeX override for LCD green */
+.lcd-katex .katex {
+  color: var(--color-lcd-green);
+}
+
+/* Retro LCD-green range slider */
+.infinite-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--color-lcd-grid);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.infinite-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--color-lcd-green);
+  border: 1px solid #1a6633;
+  box-shadow: 0 0 4px rgba(51, 255, 102, 0.4);
+  cursor: pointer;
+}
+.infinite-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--color-lcd-green);
+  border: 1px solid #1a6633;
+  box-shadow: 0 0 4px rgba(51, 255, 102, 0.4);
+  cursor: pointer;
+}
+.infinite-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: var(--color-lcd-grid);
+  border-radius: 2px;
+}
+.infinite-slider::-moz-range-track {
+  height: 6px;
+  background: var(--color-lcd-grid);
+  border-radius: 2px;
 }

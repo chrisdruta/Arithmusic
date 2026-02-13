@@ -25,19 +25,25 @@ function getItemStyle(
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     alignSelf: 'center',
-    borderRadius: 'var(--radius)',
+    borderRadius: '2px',
     fontSize: '0.875rem',
-    background: isSelected ? '#252533' : '#1a1a24',
-    borderBottom: isSelected ? '2px solid #00e5ff' : '2px solid transparent',
-    color: '#f0f0f5',
-    ...(isDragging ? { boxShadow: '0 0 12px rgba(0,229,255,0.3)' } : {}),
+    fontFamily: '"Share Tech Mono", monospace',
+    background: isSelected ? '#2a2a2c' : '#222224',
+    color: isSelected ? '#33ff66' : '#c8c8c0',
+    borderBottom: isSelected ? '2px solid #33ff66' : '2px solid transparent',
+    borderTop: '1px solid #444',
+    borderLeft: '1px solid #444',
+    borderRight: '1px solid #1a1a1a',
+    boxShadow: isDragging
+      ? '0 0 8px rgba(51,255,102,0.3), 1px 1px 0px #111'
+      : '1px 1px 0px #111, inset 0 1px 0 rgba(255,255,255,0.05)',
     ...draggableStyle,
   };
 }
 
 function getListStyle(isDraggingOver: boolean): React.CSSProperties {
   return {
-    background: isDraggingOver ? '#252533' : '#1a1a24',
+    background: isDraggingOver ? '#2a2a2c' : '#222224',
     display: 'flex',
     justifyContent: 'flex-start',
     padding: 8,

@@ -9,6 +9,20 @@ import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
 
+const RANDOM_TAG_LINES = [
+  "ARITHMETIC SYNTH",
+  "ALGORITHMIC AUDIO",
+  "COMPUTED SOUND",
+  "SPECTRAL GRAPHICS",
+  "FORMULA SYNTH",
+  "PARAMETRIC AUDIO",
+  "VECTOR SOUND",
+  "OSCILLATION ENGINE",
+  "SONIC GRAPHICS",
+  "NUMERIC AUDIO",
+]
+const TAG_LINE = RANDOM_TAG_LINES[Math.floor(Math.random() * RANDOM_TAG_LINES.length)]
+
 function AppContent() {
   const { state, dispatch } = useComposition();
 
@@ -75,18 +89,24 @@ function AppContent() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex items-center gap-2 bg-primary px-4 py-2">
-        <span className="font-display text-3xl font-bold tracking-tight text-primary-foreground select-none">
-          Arithmusic
-        </span>
+      <div className="solar-panel w-full" />
+      <header className="flex items-center gap-3 border-b border-border bg-surface-alt px-4 py-2">
+        <div className="flex flex-col select-none leading-tight">
+          <span className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            Arithmusic
+          </span>
+          <span className="font-display text-xl font-bold tracking-tight text-foreground">
+            fx-AM1 <span className="ml-2 text-xs font-normal uppercase tracking-widest text-muted-foreground">{TAG_LINE}</span>
+          </span>
+        </div>
         <div className="flex-1" />
-        <Button variant="ghost" size="icon" onClick={handlePlay} className="text-primary-foreground hover:bg-white/15">
+        <Button variant="default" size="icon" onClick={handlePlay} className="calc-button bg-primary text-primary-foreground hover:bg-primary/90">
           <Play className="size-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={handleStop} className="text-primary-foreground hover:bg-white/15">
+        <Button variant="default" size="icon" onClick={handleStop} className="calc-button bg-accent text-accent-foreground hover:bg-accent/90">
           <Square className="size-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })} className="text-primary-foreground hover:bg-white/15">
+        <Button variant="default" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })} className="calc-button bg-secondary text-secondary-foreground hover:bg-secondary/80">
           <SlidersHorizontal className="size-5" />
         </Button>
       </header>

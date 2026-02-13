@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, type Dispatch, type ReactNode } from 'react';
-import { parse, simplify } from 'mathjs';
+import { parse } from 'mathjs';
 import initialState from '../initial-state';
 import type {
   AppState,
@@ -85,8 +85,7 @@ function updateSegmentField(segment: Segment, field: SegmentField, value: string
       error = 'Undefined';
     } else {
       try {
-        const parsedMath = simplify(strVal);
-        parsedMath.evaluate({ x: 1 });
+        parse(strVal).evaluate({ x: 1 });
       } catch (e: unknown) {
         error = e instanceof Error ? e.message : String(e);
       }
