@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-import { Play, Square, SlidersHorizontal } from 'lucide-react';
+import { Play, Pause, Square, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { CompositionProvider, useComposition, computeErrors, exportCompositionJson } from './context/CompositionContext';
@@ -111,6 +111,20 @@ function AppContent() {
     audioSource.onended = stopPlaybackAnimation;
   }, [state, dispatch, stopPlaybackAnimation]);
 
+  const handlePause = useCallback(() => {
+    // Detach onended so stopping doesn't reset playbackTime
+    audioSourcesRef.current.forEach((source) => {
+      source.onended = null;
+      try { source.stop(0); } catch { /* already stopped */ }
+    });
+    audioSourcesRef.current = [];
+    // Freeze playhead at current position (don't reset playbackTime)
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
   const handleStop = useCallback(() => {
     audioSourcesRef.current.forEach((source) => {
       try { source.stop(0); } catch { /* already stopped */ }
@@ -134,6 +148,9 @@ function AppContent() {
         <div className="flex-1" />
         <Button variant="default" size="icon" onClick={handlePlay} className="calc-button bg-primary text-primary-foreground hover:bg-primary/90">
           <Play className="size-5" />
+        </Button>
+        <Button variant="default" size="icon" onClick={handlePause} className="calc-button bg-primary text-primary-foreground hover:bg-primary/90">
+          <Pause className="size-5" />
         </Button>
         <Button variant="default" size="icon" onClick={handleStop} className="calc-button bg-accent text-accent-foreground hover:bg-accent/90">
           <Square className="size-5" />
