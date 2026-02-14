@@ -47,6 +47,10 @@ Rust source using wasm-bindgen 0.2.46 (old format). Pre-compiled binaries live i
 - Base path: `/arithmusic/` (GitHub Pages deployment)
 - Build target: esnext
 
+### UI Stack
+
+Tailwind CSS v4 + shadcn/ui components (`src/components/ui/`). Use `bunx shadcn@latest add <component>` to add new ones. `cn()` utility from `src/lib/utils.ts` for class merging. Drag-and-drop via `@hello-pangea/dnd`. Math expressions rendered with KaTeX (`react-katex`). Charts use visx.
+
 ### Key Components
 
 - `src/App.tsx` — Top-level layout, audio playback controls, WASM loading

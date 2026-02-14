@@ -12,6 +12,7 @@ import EditorControls from './editor/editor-controls';
 import EditorPanel from './editor/editor-panel';
 import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
+import { getTemplateById } from '../lib/templates';
 import type { Segment } from '../types';
 
 function reorder(list: Segment[], startIndex: number, endIndex: number): Segment[] {
@@ -39,10 +40,33 @@ export default function Editor() {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const sourceRow = Number(result.source.droppableId);
-    const destRow = Number(result.destination.droppableId);
-    const sourceCol = result.source.index;
+    const sourceDropId = result.source.droppableId;
+    const destDropId = result.destination.droppableId;
     const destCol = result.destination.index;
+
+    // Template drag → insert new segment from template
+    if (sourceDropId.startsWith('templates-')) {
+      if (destDropId.startsWith('templates-')) return;
+      const template = getTemplateById(result.draggableId);
+      if (!template) return;
+      const destRow = Number(destDropId);
+      dispatch({
+        type: 'INSERT_SEGMENT',
+        row: destRow,
+        col: destCol,
+        segment: {
+          title: template.title,
+          expression: template.expression,
+          length: template.length,
+          volume: template.volume,
+        },
+      });
+      return;
+    }
+
+    const sourceRow = Number(sourceDropId);
+    const destRow = Number(destDropId);
+    const sourceCol = result.source.index;
 
     if (sourceRow === destRow) {
       if (sourceCol === destCol) return;
@@ -82,8 +106,8 @@ export default function Editor() {
         </AccordionTrigger>
         <AccordionContent className="p-0">
           <div className="flex w-full flex-col items-start bg-surface text-foreground">
-            <EditorControls />
             <DragDropContext onDragEnd={onDragEnd}>
+              <EditorControls />
               <div className="mb-1 w-full">
                 {timelines.map((_tl, rowIndex) => (
                   <div key={rowIndex} className="mt-1 flex w-full justify-start bg-surface">

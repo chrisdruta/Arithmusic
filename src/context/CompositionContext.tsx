@@ -30,6 +30,7 @@ export type Action =
   | { type: 'RESET_SETTINGS' }
   | { type: 'SET_ERRORS'; errors: CompositionErrors | null }
   | { type: 'LOAD_COMPOSITION'; timelines: Timeline[]; nextId: number }
+  | { type: 'INSERT_SEGMENT'; row: number; col: number; segment: { title: string; expression: string; length: number; volume: number } }
   | { type: 'ANIMATE_GRAPH' };
 
 // ── Pure helpers ───────────────────────────────────────────────────
@@ -231,6 +232,30 @@ function compositionReducer(state: AppState, action: Action): AppState {
           : tl
       );
       return { ...state, timelines, nextId: state.nextId + 1 };
+    }
+
+    case 'INSERT_SEGMENT': {
+      const newId = `t${state.nextId}`;
+      const { title, expression, length, volume } = action.segment;
+      const newSegment: Segment = {
+        id: newId,
+        title: { value: title, error: null },
+        expression: { value: expression, error: null },
+        length: { value: length, error: null },
+        volume: { value: volume, error: null },
+      };
+      const timelines = state.timelines.map((tl, ri) => {
+        if (ri !== action.row) return tl;
+        const newSegments = [...tl.segments];
+        newSegments.splice(action.col, 0, newSegment);
+        return { ...tl, segments: newSegments };
+      });
+      return {
+        ...state,
+        timelines,
+        nextId: state.nextId + 1,
+        selectedSegment: { row: action.row, col: action.col },
+      };
     }
 
     case 'DELETE_SEGMENT': {

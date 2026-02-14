@@ -2,6 +2,7 @@ import { Plus, Upload, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useComposition } from '../../context/CompositionContext';
 import DomainToggle from './domain-toggle';
+import TemplateDropdowns from './template-bar';
 
 export default function EditorControls() {
   const { dispatch } = useComposition();
@@ -11,6 +12,8 @@ export default function EditorControls() {
       <Button variant="secondary" size="sm" className="calc-button" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
         Track <Plus className="size-4" />
       </Button>
+      <div className="flex-1" />
+      <TemplateDropdowns />
       <div className="flex-1" />
       <div className="mr-4">
         <DomainToggle />
