@@ -68,6 +68,13 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
         <filter id="playhead-glow-med" filterUnits="userSpaceOnUse" x={0} y={0} width={width} height={height}>
           <feGaussianBlur stdDeviation="2.5" />
         </filter>
+        <filter id="playhead-glow" filterUnits="userSpaceOnUse" x={0} y={0} width={width} height={height}>
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
       <rect x={margin.left} y={margin.top} width={innerWidth} height={innerHeight} fill={bgColor} />
       <Group left={margin.left} top={margin.top}>
@@ -128,27 +135,16 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
         />
         {playbackTime !== null && playbackTime >= 0 && playbackTime <= xMax && (
           <>
-            {/* Wide soft phosphor glow (blurred) */}
+            {/* Soft phosphor glow layer */}
             <line
               x1={xScale(playbackTime)}
               x2={xScale(playbackTime)}
               y1={0}
               y2={innerHeight}
               stroke="#33ff66"
-              strokeWidth={10}
-              strokeOpacity={0.18}
-              filter="url(#playhead-glow-wide)"
-            />
-            {/* Medium glow (blurred) */}
-            <line
-              x1={xScale(playbackTime)}
-              x2={xScale(playbackTime)}
-              y1={0}
-              y2={innerHeight}
-              stroke="#33ff66"
-              strokeWidth={5}
-              strokeOpacity={0.35}
-              filter="url(#playhead-glow-med)"
+              strokeWidth={6}
+              strokeOpacity={0.1}
+              filter="url(#playhead-glow)"
             />
             {/* Main segmented line */}
             <line
@@ -160,7 +156,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               strokeWidth={1.5}
               strokeOpacity={0.9}
               strokeDasharray="8 4"
-              filter="url(#playhead-glow-med)"
+              filter="url(#playhead-glow)"
             />
             {/* Top tick mark */}
             <line
@@ -171,6 +167,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               stroke="#33ff66"
               strokeWidth={2}
               strokeOpacity={0.9}
+              filter="url(#playhead-glow)"
             />
             {/* Bottom tick mark */}
             <line
@@ -181,7 +178,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               stroke="#33ff66"
               strokeWidth={2}
               strokeOpacity={0.9}
-              filter="url(#playhead-glow-med)"
+              filter="url(#playhead-glow)"
             />
           </>
         )}

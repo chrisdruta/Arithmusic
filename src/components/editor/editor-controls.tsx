@@ -1,6 +1,7 @@
 import { Plus, Upload, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useComposition } from '../../context/CompositionContext';
+import DomainToggle from './domain-toggle';
 
 export default function EditorControls() {
   const { dispatch } = useComposition();
@@ -11,6 +12,9 @@ export default function EditorControls() {
         Track <Plus className="size-4" />
       </Button>
       <div className="flex-1" />
+      <div className="mr-4">
+        <DomainToggle />
+      </div>
       <Button
         variant="secondary"
         size="sm"
