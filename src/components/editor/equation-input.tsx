@@ -75,7 +75,7 @@ export default function EquationInput({ value, error, onChange }: {
           onChange={onChange}
           onScroll={syncScroll}
           className={cn(
-            "h-11 text-base md:text-base text-transparent caret-lcd-green",
+            "h-11 text-base md:text-base text-transparent caret-highlight",
             error && "border-destructive"
           )}
           aria-invalid={!!error}

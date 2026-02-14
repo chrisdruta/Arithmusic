@@ -71,7 +71,7 @@ export default function InfiniteSlider({ valueMs, error, onChange }: {
         }}
         onPointerUp={commitValue}
         onLostPointerCapture={commitValue}
-        className="infinite-slider w-full"
+        className="lcd-slider w-full"
       />
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

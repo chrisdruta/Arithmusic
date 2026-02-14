@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { TEMPLATE_CATEGORIES, getTemplatesByCategory, type TemplateCategory } from '../../lib/templates';
 
 function TemplateDropdown({
@@ -48,7 +49,7 @@ function TemplateDropdown({
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="absolute left-0 top-full z-50 mt-px min-w-[140px] border border-[#444] bg-[#1a1a1e] shadow-[2px_2px_0px_#111]"
+              className="absolute left-0 top-full z-50 mt-px min-w-[140px] border border-border bg-background shadow-[2px_2px_0px_#111]"
             >
               {templates.map((template, index) => (
                 <Draggable
@@ -62,11 +63,12 @@ function TemplateDropdown({
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       style={provided.draggableProps.style}
-                      className={`flex w-full cursor-grab items-center justify-between gap-4 border-b border-[#2a2a2e] px-3 py-1.5 text-left text-xs last:border-b-0 ${
+                      className={cn(
+                        "flex w-full cursor-grab items-center justify-between gap-4 border-b border-border px-3 py-1.5 text-left text-xs transition-colors duration-75 last:border-b-0",
                         snapshot.isDragging
-                          ? 'bg-[#2a2a2c] text-[#33ff66] shadow-[0_0_8px_rgba(51,255,102,0.3)]'
-                          : 'text-[#c8c8c0] hover:bg-[#2a2a2c] hover:text-[#33ff66]'
-                      }`}
+                          ? "bg-secondary text-highlight shadow-[0_0_8px_rgba(51,255,102,0.3)]"
+                          : "text-foreground hover:bg-secondary hover:text-highlight"
+                      )}
                     >
                       <span className="font-medium">{template.title}</span>
                       <span className="font-mono text-[10px] text-muted-foreground">{template.expression}</span>

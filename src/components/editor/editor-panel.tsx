@@ -18,7 +18,7 @@ export default function EditorPanel() {
   const { title, expression, length, volume } = segment;
 
   return (
-    <div className="lcd-screen flex w-full items-center gap-5 bg-card px-6 py-5 text-card-foreground" style={{ minHeight: '15vh' }}>
+    <div className="lcd-scanlines relative flex w-full items-center gap-5 bg-lcd-bg px-6 py-5 text-card-foreground min-h-[15vh]">
       <FormField
         label="Title"
         value={title.value}
@@ -54,7 +54,7 @@ export default function EditorPanel() {
           step={1}
           value={Number(volume.value) || 0}
           onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'volume', value: e.target.value })}
-          className="infinite-slider w-full"
+          className="lcd-slider w-full"
         />
         {volume.error && <p className="text-sm text-destructive">{volume.error}</p>}
       </div>
@@ -62,8 +62,8 @@ export default function EditorPanel() {
         output={expression.error ? expression.error : expression.value}
         error={!!expression.error}
       />
-      <Button variant="ghost" size="icon" className="shrink-0" onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
-        <Trash2 className="size-6" />
+      <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:bg-secondary hover:text-destructive" onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
+        <Trash2 className="size-5" />
       </Button>
     </div>
   );

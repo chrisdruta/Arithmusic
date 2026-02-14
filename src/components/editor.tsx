@@ -108,9 +108,9 @@ export default function Editor() {
           <div className="flex w-full flex-col items-start bg-surface text-foreground">
             <DragDropContext onDragEnd={onDragEnd}>
               <EditorControls />
-              <div className="mb-1 w-full">
+              <div className="w-full pb-1">
                 {timelines.map((_tl, rowIndex) => (
-                  <div key={rowIndex} className="mt-1 flex w-full justify-start bg-surface">
+                  <div key={rowIndex} className="mt-px flex w-full justify-start border-b border-border/50 bg-surface">
                     <TrackOptions rowIndex={rowIndex} />
                     <TrackTimeline rowIndex={rowIndex} />
                   </div>
@@ -120,7 +120,7 @@ export default function Editor() {
             {selectedSegmentData ? (
               <EditorPanel />
             ) : (
-              <div style={{ height: '15vh', paddingBottom: 5 }} />
+              <div className="h-[15vh]" />
             )}
           </div>
         </AccordionContent>

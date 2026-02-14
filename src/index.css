@@ -60,12 +60,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* LCD scanline overlay effect */
-.lcd-screen {
-  position: relative;
-  background-color: var(--color-lcd-bg);
+/* --- Composable utilities via @layer --- */
+
+@layer utilities {
+  /* Calculator 3D beveled button */
+  .calc-button {
+    @apply rounded-sm border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222]
+      shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)]
+      transition-all duration-75
+      active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px;
+  }
+
+  /* Solar panel decorative stripe */
+  .solar-panel {
+    @apply h-2 bg-[repeating-linear-gradient(to_right,#1a1a1e_0px,#1a1a1e_3px,#0e0e12_3px,#0e0e12_4px)];
+  }
 }
-.lcd-screen::after {
+
+/* --- Pseudo-element effects (cannot be expressed in Tailwind) --- */
+
+/* LCD scanline overlay */
+.lcd-scanlines::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -80,8 +95,8 @@ body {
   z-index: 1;
 }
 
-/* LCD pixel grid overlay */
-.lcd-pixel-grid::after {
+/* LCD pixel grid (composites with scanlines) */
+.lcd-scanlines.lcd-pixel-grid::after {
   background-image:
     repeating-linear-gradient(
       to right,
@@ -99,50 +114,14 @@ body {
     );
 }
 
-/* Calculator 3D raised-button effect */
-.calc-button {
-  border-radius: 2px !important;
-  border: 1px solid #444 !important;
-  border-top-color: #555 !important;
-  border-left-color: #555 !important;
-  border-bottom-color: #222 !important;
-  border-right-color: #222 !important;
-  box-shadow:
-    1px 1px 0px #111,
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transition: all 80ms ease;
-}
-.calc-button:active {
-  box-shadow:
-    0 0 0 #111,
-    inset 0 1px 2px rgba(0, 0, 0, 0.3);
-  transform: translateY(1px);
-}
-
-/* Solar panel decorative stripe */
-.solar-panel {
-  background: repeating-linear-gradient(
-    to right,
-    #1a1a1e 0px,
-    #1a1a1e 3px,
-    #0e0e12 3px,
-    #0e0e12 4px
-  );
-  height: 8px;
-}
-
-/* LCD green caret for highlighted inputs */
-.caret-lcd-green {
-  caret-color: var(--color-lcd-green);
-}
-
-/* KaTeX override for LCD green */
+/* KaTeX third-party class override */
 .lcd-katex .katex {
   color: var(--color-lcd-green);
 }
 
-/* Retro LCD-green range slider */
-.infinite-slider {
+/* --- Vendor-prefixed slider (no Tailwind support) --- */
+
+.lcd-slider {
   -webkit-appearance: none;
   appearance: none;
   height: 6px;
@@ -151,7 +130,7 @@ body {
   outline: none;
   cursor: pointer;
 }
-.infinite-slider::-webkit-slider-thumb {
+.lcd-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 14px;
@@ -162,7 +141,7 @@ body {
   box-shadow: 0 0 4px rgba(51, 255, 102, 0.4);
   cursor: pointer;
 }
-.infinite-slider::-moz-range-thumb {
+.lcd-slider::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border-radius: 2px;
@@ -171,59 +150,13 @@ body {
   box-shadow: 0 0 4px rgba(51, 255, 102, 0.4);
   cursor: pointer;
 }
-.infinite-slider::-webkit-slider-runnable-track {
+.lcd-slider::-webkit-slider-runnable-track {
   height: 6px;
   background: var(--color-lcd-grid);
   border-radius: 2px;
 }
-.infinite-slider::-moz-range-track {
+.lcd-slider::-moz-range-track {
   height: 6px;
   background: var(--color-lcd-grid);
   border-radius: 2px;
-}
-
-/* Retro domain toggle */
-.domain-toggle {
-  position: relative;
-  display: inline-flex;
-  background: #0a1a0a;
-  border: 1px solid #1a6633;
-  border-radius: 2px;
-  padding: 1px;
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.5),
-    0 0 6px rgba(51, 255, 102, 0.08);
-}
-.domain-toggle-option {
-  position: relative;
-  z-index: 1;
-  padding: 3px 12px;
-  font-family: var(--font-sans);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: #1a6633;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: color 0.15s ease;
-  line-height: 1.4;
-}
-.domain-toggle-option.active {
-  color: #33ff66;
-  text-shadow: 0 0 8px rgba(51, 255, 102, 0.6);
-}
-.domain-toggle-indicator {
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  width: calc(50% - 1px);
-  height: calc(100% - 2px);
-  background: rgba(51, 255, 102, 0.08);
-  border: 1px solid rgba(51, 255, 102, 0.15);
-  border-radius: 1px;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-}
-.domain-toggle-indicator.right {
-  transform: translateX(100%);
 }
