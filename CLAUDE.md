@@ -52,9 +52,10 @@ Rust source using wasm-bindgen 0.2.46 (old format). Pre-compiled binaries live i
 - `src/App.tsx` — Top-level layout, audio playback controls, WASM loading
 - `src/components/editor.tsx` — Main editor UI with accordion per track
 - `src/components/editor/` — Sub-components: segment property editor, timeline drag-and-drop, track options, expression output
-- `src/components/graph.tsx` — Plotly.js frequency visualization
+- `src/components/graph.tsx` — visx frequency visualization with playhead overlay
 - `src/components/modals/` — Settings, save/load (JSON files), alerts
 - `src/lib/synthesize.ts` — JS synthesis fallback + `SampleTrackGraph()` for plotting
+- `src/initial-state.ts` — Default composition (arpeggio)
 
 ### Known Bugs
 

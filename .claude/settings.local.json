@@ -1,9 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch",
-      "WebFetch(domain:posthog.com)",
-      "Bash(bunx ccusage statusline:*)"
+      "WebSearch"
     ]
   }
 }
