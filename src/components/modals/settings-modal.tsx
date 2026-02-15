@@ -5,6 +5,7 @@ import { FormField } from '@/components/ui/form-field';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -22,6 +23,7 @@ export default function SettingsModal() {
           <div className="flex flex-1 flex-col gap-4">
             <DialogHeader>
               <DialogTitle>Settings</DialogTitle>
+              <DialogDescription className="sr-only">Configure synthesis settings</DialogDescription>
             </DialogHeader>
             <FormField
               label="Master volume (%)"
@@ -52,7 +54,7 @@ export default function SettingsModal() {
               wrapperClassName="w-48"
             />
             <div className="flex items-center gap-3 mt-2">
-              <Label htmlFor="aliasing" className="text-sm">Enable Aliasing</Label>
+              <Label htmlFor="aliasing" className="text-sm uppercase tracking-wider text-muted-foreground">Enable Aliasing</Label>
               <Switch
                 id="aliasing"
                 checked={aliasing}
@@ -60,32 +62,30 @@ export default function SettingsModal() {
               />
             </div>
           </div>
-          <div className="flex w-56 flex-col justify-between rounded-sm border border-border p-4 self-center">
-            <h3 className="text-center text-lg font-semibold">About Arithmusic</h3>
-            <div className="mt-3 text-sm text-muted-foreground">
-              <p>Version: 2.0.0</p>
+          <div className="flex w-56 flex-col justify-between rounded-sm border border-lcd-dim bg-lcd-bg p-4 self-center shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]">
+            <h3 className="text-center font-display text-lg tracking-wider text-highlight">ARITHMUSIC</h3>
+            <div className="mt-3 space-y-1 text-sm text-lcd-dim">
+              <p>v2.0.0</p>
               <a
                 href="https://github.com/chrisdruta/arithmusic"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-highlight/70 hover:text-highlight transition-colors duration-75"
               >
                 github.com/chrisdruta/arithmusic
               </a>
               <p>GPL v3.0</p>
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Made with <span role="img" className="text-xl" aria-label="heart">&#10084;&#65039;</span>,
-              <br />
+            <p className="mt-3 text-sm text-lcd-dim">
               Chris Druta
             </p>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="secondary" onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
+          <Button variant="calc-secondary" onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
             Defaults
           </Button>
-          <Button onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
+          <Button variant="calc" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
             Close
           </Button>
         </DialogFooter>

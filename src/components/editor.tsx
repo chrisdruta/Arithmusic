@@ -101,7 +101,7 @@ export default function Editor() {
       className="w-full flex-none"
     >
       <AccordionItem value="editor" className="border-b-0">
-        <AccordionTrigger className="bg-surface-alt px-4 py-2 text-sm font-semibold uppercase tracking-widest hover:no-underline">
+        <AccordionTrigger className="bg-surface-alt px-4 py-2 text-sm font-semibold uppercase tracking-widest">
           Timeline Editor
         </AccordionTrigger>
         <AccordionContent className="p-0">
@@ -111,6 +111,10 @@ export default function Editor() {
               <div className="w-full pb-1">
                 {timelines.map((_tl, rowIndex) => (
                   <div key={rowIndex} className="mt-px flex w-full justify-start border-b border-border/50 bg-surface">
+                    <div
+                      className="w-1 shrink-0 self-stretch"
+                      style={{ backgroundColor: `var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})` }}
+                    />
                     <TrackOptions rowIndex={rowIndex} />
                     <TrackTimeline rowIndex={rowIndex} />
                   </div>
@@ -120,7 +124,11 @@ export default function Editor() {
             {selectedSegmentData ? (
               <EditorPanel />
             ) : (
-              <div className="h-[15vh]" />
+              <div className="lcd-scanlines relative flex min-h-[15vh] w-full items-center justify-center bg-lcd-bg">
+                <span className="font-display text-lg tracking-widest text-lcd-dim/60">
+                  SELECT A SEGMENT TO EDIT
+                </span>
+              </div>
             )}
           </div>
         </AccordionContent>

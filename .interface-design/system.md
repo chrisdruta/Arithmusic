@@ -12,7 +12,7 @@
 
 **Domain:** Scientific calculators, LCD displays, phosphor screens, graphing calculator UI
 **Metaphor:** The entire app is one calculator. The graph is the LCD screen. The editor is the keypad. The header is the model label strip.
-**Signature elements:** Solar panel stripe, LCD scanlines + pixel grid, beveled `calc-button`, phosphor glow on active states
+**Signature elements:** Solar panel stripe, LCD scanlines + pixel grid, beveled `calc` button variants, phosphor glow on active states
 
 ---
 
@@ -42,9 +42,11 @@
 | Token | Hex | Role |
 |-------|-----|------|
 | `primary` | `#2255cc` | Play/pause buttons, focus rings, links |
-| `accent` | `#cc3333` | Stop button, destructive, math operators in syntax highlighting |
+| `accent` / `destructive` | `#cc3333` | Stop button, delete actions, math operators in syntax highlighting |
 | `amber` | `#d4a017` | Track 2 trace, number literals in syntax highlighting |
 | `func-blue` | `#66aaff` | Track 3 trace, function names in syntax highlighting |
+
+> **Note:** `accent` and `destructive` are intentionally the same color (`#cc3333`). In this calculator theme, red means "stop/danger" universally — there's no need to distinguish "hover highlight" (shadcn's `accent`) from "danger" (shadcn's `destructive`). Use either token interchangeably for red elements.
 
 ### Track Colors (graph traces, ordered)
 1. `lcd-green` (`#33ff66`)
@@ -92,7 +94,7 @@ All fonts are monospace. No sans-serif anywhere.
 ### Elevation model
 The app uses a **border + bevel** system, not box-shadows for elevation. Shadows are reserved for two specific uses:
 
-1. **`calc-button` bevel** — 3D pressed-plastic effect:
+1. **`calc` variant bevel** — 3D pressed-plastic effect (defined in button.tsx + toggle.tsx cva variants):
    ```
    border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222]
    shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)]
@@ -135,42 +137,57 @@ Boxy. This is a calculator, not a phone app.
 
 ## Components
 
-### Buttons (`calc-button`)
-All interactive buttons use the `calc-button` utility class for the beveled 3D effect. This applies on top of shadcn `Button` variants.
+### Buttons (calc variants)
+Beveled 3D button styles are proper `cva` variants in `button.tsx`, not CSS utilities. Each variant bundles the bevel effect (border-t/l `#555`, border-b/r `#222`, inset highlight, active press) with its color scheme.
 
-- **Play/Pause:** `bg-primary text-primary-foreground` + `calc-button`
-- **Stop:** `bg-accent text-accent-foreground` + `calc-button`
-- **Settings:** `bg-secondary text-secondary-foreground` + `calc-button`
-- **Track controls:** `variant="secondary" size="sm"` + `calc-button`
-- **Template dropdowns:** Native `<button>` + `calc-button bg-secondary`
-- **Ghost buttons** (delete, add segment): No `calc-button`, just `variant="ghost"`
+| Variant | Color | Usage |
+|---------|-------|-------|
+| `calc` | `bg-primary` | Play, Pause, modal primary actions (Close, Load) |
+| `calc-secondary` | `bg-secondary` | Track controls, Save, Load, template dropdowns |
+| `calc-accent` | `bg-accent` | Stop button |
+| `ghost` | transparent | Add segment (no bevel) |
+| `ghost-destructive` | `text-muted-foreground` → `hover:text-destructive` | Delete segment (no bevel, red on hover) |
+
+Sizes: `size="icon"` for header toolbar, `size="sm"` for editor controls and modals.
 
 ### Inputs
-- Height: `h-11` in editor panel, `h-8` in track options
-- Always `text-base` at `h-11`, `text-sm` at `h-8`
-- Error state: `border-destructive`
-- Paired with `<Label>` using the standard label pattern
+Input has cva `size` variants (like Button):
+
+| Size | Height | Text | Usage |
+|------|--------|------|-------|
+| `default` | `h-9` | `text-base` | Fallback (rarely used directly) |
+| `sm` | `h-8` | `text-sm` | Track options (compact rows) |
+| `lg` | `h-11` | `text-base` | Editor panel, form fields, equations |
+
+- Error state: `border-destructive` via `className`
+- Paired with `<Label>` using `htmlFor`/`id` association
+- Native `size` attribute is omitted from props to avoid conflict with the variant
 
 ### Form Fields
-Reusable `<FormField>` wraps `Label` + `Input` + error message:
+Reusable `<FormField>` wraps `Label` + `Input` + error message. Defaults to `size="lg"`:
+```
+<FormField label="Title" value={...} error={...} onChange={...} />
+```
+Renders:
 ```
 <div className="flex flex-col gap-2">
-  <Label className="text-sm text-muted-foreground uppercase tracking-wider">
-  <Input className="h-11 text-base" />
+  <Label htmlFor={id} className="text-sm text-muted-foreground uppercase tracking-wider">
+  <Input id={id} size="lg" />
   {error && <p className="text-sm text-destructive">}
 </div>
 ```
 
 ### Toggle Groups (wave type selector)
-Items use `calc-button` + LCD highlight for active state:
+Items use `variant="calc"` (defined as a toggle cva variant in `toggle.tsx`) + LCD highlight for active state:
 ```
+variant="calc" → bevel borders + shadow
 data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight
 ```
 
 ### Segment Chips (track timeline)
-Draggable segments styled as small calculator keys:
+Draggable segments styled as small calculator keys with inline bevel styles (not a Button component — these are `<div>` elements within drag-and-drop):
 ```
-calc-button rounded-sm px-2 py-1.5 text-sm
+rounded-sm px-2 py-1.5 text-sm + inline bevel borders/shadow
 Selected: bg-secondary text-highlight border-b-2 border-b-highlight
 Default: bg-surface text-foreground border-b-2 border-b-transparent
 Dragging: glow-lcd
@@ -253,10 +270,25 @@ Graph takes `flex-1` and fills available space. Editor is `flex-none` at the bot
 
 ---
 
+## shadcn/ui Conventions
+
+- **Variants over className.** Repeated style patterns must be cva variants, not `className` overrides. If you're passing `className="bg-X text-X-foreground hover:bg-X/90"` to override a variant, create a new variant instead.
+- **No raw `<button>` elements.** Always use the `<Button>` component with the appropriate variant.
+- **Component-specific styles in components.** The `@layer utilities` in `index.css` is reserved for genuinely generic utilities (`glow-lcd`, `solar-panel`) and pseudo-element effects that Tailwind can't express. Button/toggle bevel styles live in their respective cva definitions.
+- **`className` is for one-off tweaks only.** Acceptable: `className="self-center"` (layout), `className="w-32"` (width). Not acceptable: overriding colors or interactive states that should be a variant.
+- **Custom CSS lives in `index.css` only when Tailwind can't express it:** vendor-prefixed sliders, pseudo-element overlays (`::after`), third-party class overrides (`.katex`).
+- **Strip all `dark:` classes from new components.** The app is permanently dark-themed (rule #10). When adding components via `bunx shadcn@latest add`, remove all `dark:` prefixed classes — they're dead code here.
+- **Replace `rounded-md` with `rounded-sm`** in any newly added shadcn component. Official defaults use `rounded-md`; our calculator aesthetic uses `rounded-sm` (2px) everywhere.
+- **No `"use client"` directives.** This is a Vite project, not Next.js. Strip `"use client"` from all components for consistency.
+- **Focus ring pattern.** All interactive elements use the same v4 pattern: `outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]`. Do not use the old `focus:ring-2 focus:ring-offset-2` pattern.
+- **Bevel duplication trade-off.** The calc bevel string is duplicated across `calc`, `calc-secondary`, `calc-accent` variants (and in `toggle.tsx`). This is a known trade-off since cva doesn't support composing variant fragments. If the bevel values change, update all 4 locations.
+
+---
+
 ## Rules
 
 1. **Everything is monospace.** No sans-serif fonts.
-2. **Buttons get beveled.** Any clickable rectangle uses `calc-button` unless it's a ghost/link.
+2. **Buttons get beveled.** Any clickable rectangle uses a `calc` / `calc-secondary` / `calc-accent` variant unless it's a ghost/link. Bevel styles live in component cva variants, never in CSS utilities.
 3. **LCD surfaces are recessed.** Graph and editor panel use `lcd-bg` with scanline overlays.
 4. **Shell surfaces stack by brightness.** `background` < `surface` < `surface-alt`.
 5. **Green means active/selected.** `highlight` (`#33ff66`) is the primary signal color within LCD contexts.

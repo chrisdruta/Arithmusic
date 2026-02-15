@@ -37,16 +37,18 @@ export default function EditorPanel() {
         onChange={(val) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'length', value: val })}
       />
       <div className="flex w-28 flex-col gap-2">
-        <Label className="text-sm uppercase tracking-wider text-muted-foreground">
+        <Label htmlFor="volume" className="text-sm uppercase tracking-wider text-muted-foreground">
           Volume (%)
         </Label>
         <Input
+          id="volume"
           value={volume.value}
           onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'volume', value: e.target.value })}
-          className={cn("h-11 text-base", volume.error && "border-destructive")}
+          size="lg"
+          className={cn(volume.error && "border-destructive")}
           aria-invalid={!!volume.error}
         />
-        <label className="font-display text-xs italic text-lcd-dim tracking-wide">0 — 200</label>
+        <Label className="font-display text-xs italic text-lcd-dim tracking-wide">0 — 200</Label>
         <input
           type="range"
           min={0}
@@ -55,6 +57,7 @@ export default function EditorPanel() {
           value={Number(volume.value) || 0}
           onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'volume', value: e.target.value })}
           className="lcd-slider w-full"
+          aria-label="Volume"
         />
         {volume.error && <p className="text-sm text-destructive">{volume.error}</p>}
       </div>
@@ -62,7 +65,7 @@ export default function EditorPanel() {
         output={expression.error ? expression.error : expression.value}
         error={!!expression.error}
       />
-      <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:bg-secondary hover:text-destructive" onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
+      <Button variant="ghost-destructive" size="icon" className="shrink-0" aria-label="Delete segment" onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
         <Trash2 className="size-5" />
       </Button>
     </div>

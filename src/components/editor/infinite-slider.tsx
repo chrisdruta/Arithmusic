@@ -39,20 +39,22 @@ export default function InfiniteSlider({ valueMs, error, onChange }: {
 
   return (
     <div className="flex w-44 flex-col gap-2">
-      <Label className="text-sm uppercase tracking-wider text-muted-foreground">
+      <Label htmlFor="length" className="text-sm uppercase tracking-wider text-muted-foreground">
         Length (s)
       </Label>
       <Input
+        id="length"
         value={dragging ? localValue : parseFloat(seconds.toFixed(3))}
         onChange={(e) => {
           const secs = Number(e.target.value);
           if (!isNaN(secs)) onChange(String(Math.round(secs * 1000)));
           else onChange(e.target.value);
         }}
-        className={cn("h-11 text-base", error && "border-destructive")}
+        size="lg"
+        className={cn(error && "border-destructive")}
         aria-invalid={!!error}
       />
-      <label className="font-display text-xs italic text-lcd-dim tracking-wide">Infini-Slide</label>
+      <Label className="font-display text-xs italic text-lcd-dim tracking-wide">Infini-Slide</Label>
       <input
         type="range"
         min={0}
@@ -72,6 +74,7 @@ export default function InfiniteSlider({ valueMs, error, onChange }: {
         onPointerUp={commitValue}
         onLostPointerCapture={commitValue}
         className="lcd-slider w-full"
+        aria-label="Length"
       />
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

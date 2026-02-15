@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -42,7 +43,7 @@ export default function LoadModal() {
         <DialogHeader>
           <DialogTitle>Load Composition</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">Paste json below</p>
+        <DialogDescription>Paste json below</DialogDescription>
         <Textarea
           rows={7}
           value={text}
@@ -58,10 +59,10 @@ export default function LoadModal() {
           <p>Drag 'n' drop a file here, or click to select file</p>
         </div>
         <DialogFooter>
-          <Button variant="secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
+          <Button variant="calc-secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
             Cancel
           </Button>
-          <Button onClick={handleLoad}>Load</Button>
+          <Button variant="calc" onClick={handleLoad}>Load</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

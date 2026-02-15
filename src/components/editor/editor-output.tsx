@@ -2,6 +2,14 @@ import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 import { parse, simplify } from 'mathjs';
 
+// KaTeX \textcolor requires hex literals (can't use CSS vars)
+const KATEX_COLORS = {
+  func: '#66aaff',
+  number: '#d4a017',
+  operator: '#cc3333',
+  variable: '#33ff66',
+} as const;
+
 // Colorize LaTeX tokens using \textcolor — base color (LCD green) handles
 // structural elements (parens, braces, equals, prefix) automatically
 const TEX_TOKEN = /(\\(?:sin|cos|tan|asin|acos|atan|log|ln|exp|min|max)\b)|(\\pi\b)|(\d+\.?\d*)|(\\cdot|\\times)|(\\[a-zA-Z]+)|([+\-])|(x)(?![a-zA-Z])|(.)/g;
@@ -12,10 +20,10 @@ function colorizeTex(tex: string): string {
   TEX_TOKEN.lastIndex = 0;
   while ((m = TEX_TOKEN.exec(tex)) !== null) {
     const [full, func, , num, mulOp, , addOp, variable] = m;
-    if (func) parts.push(`\\textcolor{#66aaff}{${func}}`);
-    else if (num) parts.push(`\\textcolor{#d4a017}{${num}}`);
-    else if (mulOp || addOp) parts.push(`\\textcolor{#cc3333}{${full}}`);
-    else if (variable) parts.push(`\\textcolor{#33ff66}{${variable}}`);
+    if (func) parts.push(`\\textcolor{${KATEX_COLORS.func}}{${func}}`);
+    else if (num) parts.push(`\\textcolor{${KATEX_COLORS.number}}{${num}}`);
+    else if (mulOp || addOp) parts.push(`\\textcolor{${KATEX_COLORS.operator}}{${full}}`);
+    else if (variable) parts.push(`\\textcolor{${KATEX_COLORS.variable}}{${variable}}`);
     else parts.push(full);
   }
   return parts.join('');

@@ -3,6 +3,7 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -19,10 +20,10 @@ export default function SaveModal() {
         <DialogHeader>
           <DialogTitle>Save Composition</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">Copy the text below</p>
+        <DialogDescription>Copy the text below</DialogDescription>
         <Textarea readOnly rows={7} value={currentComposition} className="font-mono text-xs" />
         <p className="text-sm text-muted-foreground">or</p>
-        <Button asChild className="self-center">
+        <Button asChild variant="calc" className="self-center">
           <a
             download="composition.json"
             target="_blank"
@@ -32,7 +33,7 @@ export default function SaveModal() {
           </a>
         </Button>
         <DialogFooter>
-          <Button variant="secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
+          <Button variant="calc-secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
             Close
           </Button>
         </DialogFooter>

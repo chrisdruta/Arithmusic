@@ -1,14 +1,15 @@
+import { type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { Input } from "@/components/ui/input"
+import { Input, inputVariants } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-interface FormFieldProps extends React.ComponentProps<"input"> {
+type FormFieldProps = Omit<React.ComponentProps<"input">, "size"> & VariantProps<typeof inputVariants> & {
   label: string;
   error?: string | null;
   wrapperClassName?: string;
 }
 
-export function FormField({ label, error, wrapperClassName, className, id, ...props }: FormFieldProps) {
+export function FormField({ label, error, wrapperClassName, className, id, size = "lg", ...props }: FormFieldProps) {
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div className={cn("flex flex-col gap-2", wrapperClassName)}>
@@ -17,7 +18,8 @@ export function FormField({ label, error, wrapperClassName, className, id, ...pr
       </Label>
       <Input
         id={fieldId}
-        className={cn("h-11 text-base", error && "border-destructive", className)}
+        size={size}
+        className={cn(error && "border-destructive", className)}
         aria-invalid={!!error}
         {...props}
       />

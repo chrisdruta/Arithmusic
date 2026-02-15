@@ -3,6 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -41,9 +42,9 @@ export default function AlertModal() {
         <DialogHeader>
           <DialogTitle>Composition Errors</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
+        <DialogDescription>
           Please fix the following errors and try again
-        </p>
+        </DialogDescription>
         <ul className="flex flex-col gap-1">
           {items.map((item, i) => (
             <li key={item.key}>
@@ -53,7 +54,7 @@ export default function AlertModal() {
           ))}
         </ul>
         <DialogFooter>
-          <Button onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
+          <Button variant="calc" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
             Close
           </Button>
         </DialogFooter>

@@ -146,16 +146,19 @@ function AppContent() {
           </span>
         </div>
         <div className="flex-1" />
-        <Button variant="default" size="icon" onClick={handlePlay} className="calc-button bg-primary text-primary-foreground hover:bg-primary/90">
-          <Play className="size-5" />
-        </Button>
-        <Button variant="default" size="icon" onClick={handlePause} className="calc-button bg-primary text-primary-foreground hover:bg-primary/90">
-          <Pause className="size-5" />
-        </Button>
-        <Button variant="default" size="icon" onClick={handleStop} className="calc-button bg-accent text-accent-foreground hover:bg-accent/90">
+        <div className="flex items-center gap-1">
+          <Button variant="calc" size="icon" onClick={handlePlay}>
+            <Play className="size-5" />
+          </Button>
+          <Button variant="calc" size="icon" onClick={handlePause}>
+            <Pause className="size-5" />
+          </Button>
+        </div>
+        <Button variant="calc-accent" size="icon" onClick={handleStop}>
           <Square className="size-5" />
         </Button>
-        <Button variant="default" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })} className="calc-button bg-secondary text-secondary-foreground hover:bg-secondary/80">
+        <div className="mx-1 self-stretch border-r border-border/40" />
+        <Button variant="calc-secondary" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
           <SlidersHorizontal className="size-5" />
         </Button>
       </header>

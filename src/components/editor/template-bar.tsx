@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TEMPLATE_CATEGORIES, getTemplatesByCategory, type TemplateCategory } from '../../lib/templates';
 
@@ -32,13 +33,15 @@ function TemplateDropdown({
 
   return (
     <div ref={ref} className="relative">
-      <button
+      <Button
+        variant="calc-secondary"
+        size="sm"
         onClick={() => setOpenCategory(isOpen ? null : category)}
-        className="calc-button flex items-center gap-1 bg-secondary px-2.5 py-1.5 text-xs font-medium text-secondary-foreground"
+        className="text-xs"
       >
         {label}
-        <ChevronDown className={`size-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
+        <ChevronDown className={cn("size-3 transition-transform", isOpen && "rotate-180")} />
+      </Button>
 
       {isOpen && (
         <Droppable

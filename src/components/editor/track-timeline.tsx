@@ -32,11 +32,11 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
                     style={provided.draggableProps.style as React.CSSProperties | undefined}
                     onClick={() => dispatch({ type: 'SEGMENT_SELECT', row: rowIndex, col: colIndex })}
                     className={cn(
-                      "ml-1 select-none self-center truncate rounded-sm px-2 py-1.5 text-sm transition-[background,color,border-color,box-shadow] duration-75",
-                      "calc-button",
+                      "ml-1 select-none self-center truncate rounded-sm px-2 py-1.5 text-sm transition-all duration-75",
+                      "border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222] shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)] active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px",
                       isSelected
-                        ? "bg-secondary text-highlight border-b-2 border-b-highlight"
-                        : "bg-surface text-foreground border-b-2 border-b-transparent hover:bg-secondary hover:text-highlight",
+                        ? "bg-secondary text-highlight border-b-2 border-b-highlight [text-shadow:0_0_8px_rgba(51,255,102,0.4)]"
+                        : "bg-surface text-foreground border-b-2 border-b-transparent hover:bg-secondary/80 hover:text-highlight/80",
                       snapshot.isDragging && "glow-lcd"
                     )}
                   >
@@ -47,12 +47,12 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
             );
           })}
           {provided.placeholder}
-          <div className="mx-1.5 self-stretch border-r border-border" />
+          <div className="mx-1 self-stretch border-r border-border/40" />
           <Button
             variant="ghost"
             size="icon-sm"
             onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })}
-            className="self-center text-muted-foreground hover:bg-secondary hover:text-foreground"
+            className="self-center text-muted-foreground hover:bg-secondary hover:text-highlight"
           >
             <Plus className="size-4" />
           </Button>

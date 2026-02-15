@@ -8,25 +8,23 @@ export default function EditorControls() {
   const { dispatch } = useComposition();
 
   return (
-    <div className="flex w-full items-center justify-between bg-surface-alt px-2.5 pb-2.5">
-      <Button variant="secondary" size="sm" className="calc-button" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
+    <div className="flex w-full items-center gap-2 bg-surface-alt px-2.5 py-2">
+      <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
         Track <Plus className="size-4" />
       </Button>
-      <div className="flex-1" />
+      <div className="mx-1 self-stretch border-r border-border/40" />
       <TemplateDropdowns />
       <div className="flex-1" />
-      <div className="mr-4">
-        <DomainToggle />
-      </div>
+      <DomainToggle />
+      <div className="mx-1 self-stretch border-r border-border/40" />
       <Button
-        variant="secondary"
+        variant="calc-secondary"
         size="sm"
-        className="calc-button mr-2.5"
         onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}
       >
         Load <Upload className="size-4" />
       </Button>
-      <Button variant="secondary" size="sm" className="calc-button" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
+      <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
         Save <Save className="size-4" />
       </Button>
     </div>

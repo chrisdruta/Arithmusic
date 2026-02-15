@@ -59,7 +59,7 @@ export default function EquationInput({ value, error, onChange }: {
         <div
           ref={mirrorRef}
           aria-hidden
-          className="pointer-events-none absolute inset-0 flex h-11 items-center overflow-hidden rounded-md border border-transparent px-3 text-base"
+          className="pointer-events-none absolute inset-0 flex h-11 items-center overflow-hidden rounded-sm border border-transparent px-3 text-base"
         >
           <span className="whitespace-pre">
             {highlightMath(value).map((t, i) => (
@@ -73,8 +73,9 @@ export default function EquationInput({ value, error, onChange }: {
           value={value}
           onChange={onChange}
           onScroll={syncScroll}
+          size="lg"
           className={cn(
-            "h-11 text-base md:text-base text-transparent caret-highlight",
+            "text-transparent caret-highlight",
             error && "border-destructive"
           )}
           aria-invalid={!!error}

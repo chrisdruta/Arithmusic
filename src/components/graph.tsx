@@ -189,7 +189,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
 
 export default function Graph({ playbackTime }: { playbackTime: number | null }) {
   return (
-    <div className="lcd-scanlines lcd-pixel-grid relative m-2 min-h-0 flex-1 overflow-hidden rounded-sm border-2 border-border bg-lcd-bg">
+    <div className="lcd-scanlines lcd-pixel-grid relative mx-2.5 my-2 min-h-0 flex-1 overflow-hidden rounded-sm border-2 border-border bg-lcd-bg shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]">
       <ParentSize>
         {({ width, height }) => <Chart width={width} height={height} playbackTime={playbackTime} />}
       </ParentSize>

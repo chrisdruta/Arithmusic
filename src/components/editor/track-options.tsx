@@ -22,9 +22,9 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
   return (
     <div className="flex items-center gap-2.5 bg-surface px-2.5 py-1">
       <Button
-        variant="secondary"
+        variant="calc-secondary"
         size="sm"
-        className={cn("calc-button", rowIndex === 0 && "invisible")}
+        className={cn(rowIndex === 0 && "invisible")}
         onClick={() => dispatch({ type: 'DELETE_TRACK', rowIndex })}
       >
         Track <Minus className="size-4" />
@@ -32,7 +32,8 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
       <Input
         value={options.title}
         onChange={(e) => dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'title', value: e.target.value })}
-        className="h-8 w-32 bg-muted text-sm"
+        size="sm"
+        className="w-32 bg-muted"
       />
       <ToggleGroup
         type="single"
@@ -42,13 +43,13 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
           if (val) dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'wave', value: val });
         }}
       >
-        <ToggleGroupItem value="sine" aria-label="Sine wave" className="calc-button data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight">
+        <ToggleGroupItem value="sine" aria-label="Sine wave" variant="calc">
           <MdiIcon path={mdiSineWave} />
         </ToggleGroupItem>
-        <ToggleGroupItem value="triangle" aria-label="Triangle wave" className="calc-button data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight">
+        <ToggleGroupItem value="triangle" aria-label="Triangle wave" variant="calc">
           <MdiIcon path={mdiTriangleWave} />
         </ToggleGroupItem>
-        <ToggleGroupItem value="saw" aria-label="Sawtooth wave" className="calc-button data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight">
+        <ToggleGroupItem value="saw" aria-label="Sawtooth wave" variant="calc">
           <MdiIcon path={mdiSawtoothWave} />
         </ToggleGroupItem>
       </ToggleGroup>
@@ -57,7 +58,7 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
         pressed={options.mute}
         onPressedChange={() => dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'mute', value: '' })}
         aria-label="Mute track"
-        className="calc-button data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight"
+        variant="calc"
       >
         <VolumeX className="size-4" />
       </Toggle>
