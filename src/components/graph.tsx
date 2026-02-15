@@ -12,16 +12,16 @@ import { useComposition } from '../context/CompositionContext';
 const margin = { top: 40, left: 95, right: 50, bottom: 85 };
 const fontFamily = '"Share Tech Mono", monospace';
 const trackColors = [
-  '#33ff66', // green
-  '#ff5733', // coral-orange (primary)
-  '#7c5cbf', // purple (accent)
-  '#ffcc33', // gold
+  'var(--color-lcd-green)',
+  'var(--color-amber)',
+  'var(--color-func-blue)',
+  'var(--color-accent)',
 ];
 const dimOpacity = 0.3;
-const gridColor = '#0d2e0d';
-const bgColor = '#0a1a0a';
-const textColor = '#1a6633';
-const tickColor = '#33ff66';
+const gridColor = 'var(--color-lcd-grid)';
+const bgColor = 'var(--color-lcd-bg)';
+const textColor = 'var(--color-lcd-dim)';
+const tickColor = 'var(--color-lcd-green)';
 
 function Chart({ width, height, playbackTime }: { width: number; height: number; playbackTime: number | null }) {
   const { state } = useComposition();
@@ -141,7 +141,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               x2={xScale(playbackTime)}
               y1={0}
               y2={innerHeight}
-              stroke="#33ff66"
+              stroke="var(--color-lcd-green)"
               strokeWidth={6}
               strokeOpacity={0.1}
               filter="url(#playhead-glow)"
@@ -152,7 +152,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               x2={xScale(playbackTime)}
               y1={0}
               y2={innerHeight}
-              stroke="#33ff66"
+              stroke="var(--color-lcd-green)"
               strokeWidth={1.5}
               strokeOpacity={0.9}
               strokeDasharray="8 4"
@@ -164,7 +164,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               x2={xScale(playbackTime) + 5}
               y1={0}
               y2={0}
-              stroke="#33ff66"
+              stroke="var(--color-lcd-green)"
               strokeWidth={2}
               strokeOpacity={0.9}
               filter="url(#playhead-glow)"
@@ -175,7 +175,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               x2={xScale(playbackTime) + 5}
               y1={innerHeight}
               y2={innerHeight}
-              stroke="#33ff66"
+              stroke="var(--color-lcd-green)"
               strokeWidth={2}
               strokeOpacity={0.9}
               filter="url(#playhead-glow)"

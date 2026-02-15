@@ -33,7 +33,7 @@ interface EditorOutputProps {
 
 export default function EditorOutput({ output, error }: EditorOutputProps) {
   return (
-    <div className="flex min-w-0 shrink flex-col gap-2" style={{ flexBasis: '30%' }}>
+    <div className="flex min-w-0 shrink basis-[30%] flex-col gap-2">
       <span className="text-sm uppercase tracking-wider text-muted-foreground">Output</span>
       {!error ? (
         <span className="lcd-katex overflow-hidden">

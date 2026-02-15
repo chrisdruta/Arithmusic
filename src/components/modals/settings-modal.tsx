@@ -60,7 +60,7 @@ export default function SettingsModal() {
               />
             </div>
           </div>
-          <div className="flex w-56 flex-col justify-between rounded-[var(--radius)] border border-border p-4 self-center">
+          <div className="flex w-56 flex-col justify-between rounded-sm border border-border p-4 self-center">
             <h3 className="text-center text-lg font-semibold">About Arithmusic</h3>
             <div className="mt-3 text-sm text-muted-foreground">
               <p>Version: 2.0.0</p>
@@ -75,7 +75,7 @@ export default function SettingsModal() {
               <p>GPL v3.0</p>
             </div>
             <p className="mt-3 text-sm text-muted-foreground">
-              Made with <span role="img" style={{ fontSize: 20 }} aria-label="heart">&#10084;&#65039;</span>,
+              Made with <span role="img" className="text-xl" aria-label="heart">&#10084;&#65039;</span>,
               <br />
               Chris Druta
             </p>

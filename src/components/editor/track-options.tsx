@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { cn } from '@/lib/utils';
 import { useComposition } from '../../context/CompositionContext';
 
 function MdiIcon({ path }: { path: string }) {
@@ -23,7 +24,7 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
       <Button
         variant="secondary"
         size="sm"
-        className={`calc-button ${rowIndex === 0 ? 'invisible' : ''}`}
+        className={cn("calc-button", rowIndex === 0 && "invisible")}
         onClick={() => dispatch({ type: 'DELETE_TRACK', rowIndex })}
       >
         Track <Minus className="size-4" />

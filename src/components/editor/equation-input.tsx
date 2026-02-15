@@ -7,13 +7,13 @@ import { cn } from '@/lib/utils';
 const MATH_TOKEN = /(\b(?:sin|cos|tan|asin|acos|atan|atan2|sqrt|abs|log|ln|exp|ceil|floor|round|min|max|pow|mod)\b)|\b(pi|e)\b|(x)|([0-9]+\.?[0-9]*)|([+\-*/^%])|([()])|(.)/g;
 
 const TOKEN_COLORS: Record<string, string> = {
-  func: '#66aaff',    // blue — math functions
-  const: '#33ff66',   // LCD green — constants (pi, e)
-  var: '#33ff66',     // LCD green — variables
-  num: '#d4a017',     // amber — numbers
-  op: '#cc3333',      // red — operators
-  paren: '#808078',   // muted — parentheses
-  other: '#c8c8c0',   // foreground — everything else
+  func: 'var(--color-func-blue)',
+  const: 'var(--color-lcd-green)',
+  var: 'var(--color-lcd-green)',
+  num: 'var(--color-amber)',
+  op: 'var(--color-accent)',
+  paren: 'var(--color-muted-foreground)',
+  other: 'var(--color-foreground)',
 };
 
 function highlightMath(text: string) {
@@ -59,8 +59,7 @@ export default function EquationInput({ value, error, onChange }: {
         <div
           ref={mirrorRef}
           aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center overflow-hidden rounded-md border border-transparent px-3 text-base"
-          style={{ height: '2.75rem' }}
+          className="pointer-events-none absolute inset-0 flex h-11 items-center overflow-hidden rounded-md border border-transparent px-3 text-base"
         >
           <span className="whitespace-pre">
             {highlightMath(value).map((t, i) => (

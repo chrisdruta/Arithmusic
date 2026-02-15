@@ -33,7 +33,7 @@ Dark-only. Monospace. Boxy. LCD phosphor aesthetic.
 
 | Token | Hex | Usage |
 |---|---|---|
-| func | `#66aaff` | Math functions (sin, cos, etc.) — **orphan, not in theme** |
+| func | `#66aaff` | Math functions (sin, cos, etc.) — also used as graph track color |
 | const / var | `#33ff66` | Constants (pi, e) and variable (x) |
 | num | `#d4a017` | Numeric literals |
 | op | `#cc3333` | Operators (+, -, *, /) |
@@ -114,6 +114,8 @@ Used on: dragged timeline segments, dragged template items.
 ### Allowed shadows
 - `.calc-button` emboss shadow (standard)
 - Drag glow (`rgba(51,255,102,0.3)`) for interactive feedback
+- LCD container inset (`inset 0 1px 3px rgba(0,0,0,0.5)`) — recessed screen effect on toggle/input containers
+- LCD text-shadow glow (`0 0 8px rgba(51,255,102,0.6)`) — phosphor glow on active LCD text
 - `shadow-xs` on shadcn inputs (framework default, acceptable)
 - No floating/elevation shadows — depth is communicated through borders and color
 

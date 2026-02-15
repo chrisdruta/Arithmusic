@@ -49,7 +49,7 @@ function TemplateDropdown({
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="absolute left-0 top-full z-50 mt-px min-w-[140px] border border-border bg-background shadow-[2px_2px_0px_#111]"
+              className="absolute left-0 top-full z-50 mt-px min-w-[140px] border border-border bg-background shadow-[1px_1px_0px_#111]"
             >
               {templates.map((template, index) => (
                 <Draggable
@@ -66,12 +66,12 @@ function TemplateDropdown({
                       className={cn(
                         "flex w-full cursor-grab items-center justify-between gap-4 border-b border-border px-3 py-1.5 text-left text-xs transition-colors duration-75 last:border-b-0",
                         snapshot.isDragging
-                          ? "bg-secondary text-highlight shadow-[0_0_8px_rgba(51,255,102,0.3)]"
+                          ? "bg-secondary text-highlight glow-lcd"
                           : "text-foreground hover:bg-secondary hover:text-highlight"
                       )}
                     >
                       <span className="font-medium">{template.title}</span>
-                      <span className="font-mono text-[10px] text-muted-foreground">{template.expression}</span>
+                      <span className="font-mono text-xs text-muted-foreground">{template.expression}</span>
                     </div>
                   )}
                 </Draggable>

@@ -37,7 +37,7 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
                       isSelected
                         ? "bg-secondary text-highlight border-b-2 border-b-highlight"
                         : "bg-surface text-foreground border-b-2 border-b-transparent hover:bg-secondary hover:text-highlight",
-                      snapshot.isDragging && "shadow-[0_0_8px_rgba(51,255,102,0.3)]"
+                      snapshot.isDragging && "glow-lcd"
                     )}
                   >
                     {segment.title.value}

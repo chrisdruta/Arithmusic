@@ -34,6 +34,7 @@
   --color-lcd-grid: #0d2e0d;
   --color-lcd-dim: #1a6633;
   --color-amber: #d4a017;
+  --color-func-blue: #66aaff;
 
   /* Boxy calculator corners */
   --radius: 2px;
@@ -69,6 +70,11 @@ body {
       shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)]
       transition-all duration-75
       active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px;
+  }
+
+  /* LCD green glow (drag-and-drop, active states) */
+  .glow-lcd {
+    @apply shadow-[0_0_8px_rgba(51,255,102,0.3)];
   }
 
   /* Solar panel decorative stripe */
