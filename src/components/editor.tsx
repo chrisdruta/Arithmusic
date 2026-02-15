@@ -101,7 +101,7 @@ export default function Editor() {
       className="w-full flex-none"
     >
       <AccordionItem value="editor" className="border-b-0">
-        <AccordionTrigger className="bg-surface-alt px-4 py-2 text-sm font-semibold uppercase tracking-widest">
+        <AccordionTrigger className="bg-surface-alt px-4 text-sm font-semibold uppercase tracking-widest">
           Timeline Editor
         </AccordionTrigger>
         <AccordionContent className="p-0">

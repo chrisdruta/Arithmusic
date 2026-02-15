@@ -8,7 +8,7 @@ export default function EditorControls() {
   const { dispatch } = useComposition();
 
   return (
-    <div className="flex w-full items-center gap-2 bg-surface-alt px-2.5 py-2">
+    <div className="flex w-full items-center gap-2 bg-surface-alt px-2.5 pb-2.5">
       <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
         Track <Plus className="size-4" />
       </Button>

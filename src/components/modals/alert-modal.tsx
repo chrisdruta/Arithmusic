@@ -54,7 +54,7 @@ export default function AlertModal() {
           ))}
         </ul>
         <DialogFooter>
-          <Button variant="calc" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
+          <Button variant="calc" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'alert' })}>
             Close
           </Button>
         </DialogFooter>

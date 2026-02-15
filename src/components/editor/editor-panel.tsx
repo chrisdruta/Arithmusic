@@ -18,7 +18,7 @@ export default function EditorPanel() {
   const { title, expression, length, volume } = segment;
 
   return (
-    <div className="lcd-scanlines relative flex w-full items-center gap-5 bg-lcd-bg px-6 py-5 text-card-foreground min-h-[15vh]">
+    <div className="lcd-scanlines relative flex w-full items-center gap-5 bg-lcd-bg px-6 py-5 text-foreground min-h-[15vh]">
       <FormField
         label="Title"
         value={title.value}

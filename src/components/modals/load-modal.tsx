@@ -42,8 +42,8 @@ export default function LoadModal() {
       <DialogContent showCloseButton={false} className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Load Composition</DialogTitle>
+          <DialogDescription>Paste json below</DialogDescription>
         </DialogHeader>
-        <DialogDescription>Paste json below</DialogDescription>
         <Textarea
           rows={7}
           value={text}
@@ -53,16 +53,16 @@ export default function LoadModal() {
         <p className="text-sm text-muted-foreground">or</p>
         <div
           {...getRootProps()}
-          className="cursor-pointer rounded-[var(--radius)] border-2 border-dashed border-muted-foreground/30 bg-muted/50 p-5 text-center text-sm text-muted-foreground transition-colors hover:border-primary/50"
+          className="cursor-pointer rounded-sm border-2 border-dashed border-muted-foreground/30 bg-muted/50 p-5 text-center text-sm text-muted-foreground transition-colors hover:border-primary/50"
         >
           <input {...getInputProps()} />
           <p>Drag 'n' drop a file here, or click to select file</p>
         </div>
         <DialogFooter>
-          <Button variant="calc-secondary" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
+          <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}>
             Cancel
           </Button>
-          <Button variant="calc" onClick={handleLoad}>Load</Button>
+          <Button variant="calc" size="sm" onClick={handleLoad}>Load</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -53,7 +53,7 @@ export default function SettingsModal() {
               onChange={(e) => dispatch({ type: 'SETTINGS_CHANGE', field: 'fs', value: e.target.value })}
               wrapperClassName="w-48"
             />
-            <div className="flex items-center gap-3 mt-2">
+            <div className="flex items-center gap-3">
               <Label htmlFor="aliasing" className="text-sm uppercase tracking-wider text-muted-foreground">Enable Aliasing</Label>
               <Switch
                 id="aliasing"
@@ -82,10 +82,10 @@ export default function SettingsModal() {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="calc-secondary" onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
+          <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'RESET_SETTINGS' })}>
             Defaults
           </Button>
-          <Button variant="calc" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
+          <Button variant="calc" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
             Close
           </Button>
         </DialogFooter>
