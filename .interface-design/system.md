@@ -1,232 +1,267 @@
 # Arithmusic Design System
 
-Theme: **Retro Calculator / Casio fx-6300G**
-Dark-only. Monospace. Boxy. LCD phosphor aesthetic.
+## Intent
+
+**Who:** A curious tinkerer at the intersection of math and music. Someone who opens a graphing calculator for fun, hears a sine wave and thinks "what if I add harmonics?" Late night, headphones on, exploring.
+
+**Task:** Write mathematical expressions that become sound. Arrange them into tracks. Hit play and hear the math. Tweak, re-listen, iterate.
+
+**Feel:** A **Casio fx-6300G scientific calculator** — the dark injection-molded shell, LCD phosphor glow, beveled plastic keys, the solar panel stripe. Not retro as decoration — retro as *instrument*. The kind of object that felt powerful in your hands.
+
+## Direction
+
+**Domain:** Scientific calculators, LCD displays, phosphor screens, graphing calculator UI
+**Metaphor:** The entire app is one calculator. The graph is the LCD screen. The editor is the keypad. The header is the model label strip.
+**Signature elements:** Solar panel stripe, LCD scanlines + pixel grid, beveled `calc-button`, phosphor glow on active states
 
 ---
 
-## Color Palette
+## Palette
 
-### Semantic Tokens (CSS custom properties)
-
-| Token | Hex | Usage |
-|---|---|---|
-| `background` | `#1c1c1e` | App background (calculator body) |
-| `foreground` | `#c8c8c0` | Default text |
-| `surface` | `#222224` | Panel backgrounds (editor rows, droppable areas) |
-| `surface-alt` | `#2c2c2e` | Toolbar / accordion header backgrounds |
-| `card` / `lcd-bg` | `#0a1a0a` | LCD screen areas (graph, editor panel) |
-| `card-foreground` / `lcd-green` | `#33ff66` | LCD phosphor green — primary display color |
-| `lcd-grid` | `#0d2e0d` | LCD grid lines, slider tracks |
-| `lcd-dim` | `#1a6633` | Dim LCD text, inactive labels |
-| `primary` | `#2255cc` | Primary actions (Play, Close, Load) |
-| `primary-foreground` | `#ffffff` | Text on primary |
-| `secondary` | `#2a2a2c` | Secondary actions (Track+, Save, Load, Defaults) |
-| `secondary-foreground` | `#d0d0c8` | Text on secondary |
-| `accent` / `destructive` | `#cc3333` | Red — Stop button, errors, operators in syntax |
-| `muted` | `#2a2a2c` | Muted backgrounds |
+### Shell (calculator body)
+| Token | Hex | Role |
+|-------|-----|------|
+| `background` | `#1c1c1e` | Outer shell, deepest surface |
+| `surface` | `#222224` | Track rows, mid-level panels |
+| `surface-alt` | `#2c2c2e` | Header, controls bar, accordion trigger |
+| `secondary` | `#2a2a2c` | Button fills, hover states |
+| `muted` | `#2a2a2c` | Input backgrounds, subdued fills |
+| `border` | `#3a3a38` | Structural separators |
+| `foreground` | `#c8c8c0` | Body text (warm gray, not pure white) |
 | `muted-foreground` | `#808078` | Labels, secondary text |
-| `border` / `input` | `#3a3a38` | Default borders |
-| `amber` | `#d4a017` | Numbers in syntax highlighting |
 
-### Syntax Highlighting Colors
+### LCD Screen
+| Token | Hex | Role |
+|-------|-----|------|
+| `lcd-bg` | `#0a1a0a` | Graph background, editor panel bg |
+| `lcd-green` / `highlight` | `#33ff66` | Primary LCD phosphor — traces, selected states, active text |
+| `lcd-grid` | `#0d2e0d` | Graph gridlines, slider tracks |
+| `lcd-dim` | `#1a6633` | Muted LCD text (slider labels, domain toggle inactive) |
 
-| Token | Hex | Usage |
-|---|---|---|
-| func | `#66aaff` | Math functions (sin, cos, etc.) — also used as graph track color |
-| const / var | `#33ff66` | Constants (pi, e) and variable (x) |
-| num | `#d4a017` | Numeric literals |
-| op | `#cc3333` | Operators (+, -, *, /) |
-| paren | `#808078` | Parentheses |
-| other | `#c8c8c0` | Fallback |
+### Signal Colors
+| Token | Hex | Role |
+|-------|-----|------|
+| `primary` | `#2255cc` | Play/pause buttons, focus rings, links |
+| `accent` | `#cc3333` | Stop button, destructive, math operators in syntax highlighting |
+| `amber` | `#d4a017` | Track 2 trace, number literals in syntax highlighting |
+| `func-blue` | `#66aaff` | Track 3 trace, function names in syntax highlighting |
+
+### Track Colors (graph traces, ordered)
+1. `lcd-green` (`#33ff66`)
+2. `amber` (`#d4a017`)
+3. `func-blue` (`#66aaff`)
+4. `accent` (`#cc3333`)
+
+Unselected tracks render at `0.3` opacity. Selected track renders at full opacity, `strokeWidth: 2`.
 
 ---
 
 ## Typography
 
-| Token | Value |
-|---|---|
-| `--font-sans` | `"Share Tech Mono", "Courier New", monospace` |
-| `--font-display` | `"VT323", "Share Tech Mono", monospace` |
+| Role | Font | Size | Weight | Tracking | Extras |
+|------|------|------|--------|----------|--------|
+| **Body** | `Share Tech Mono` | `text-base` | normal | default | Monospace throughout |
+| **Display/branding** | `VT323` | varies | bold | `tracking-tight` | Header title |
+| **Labels** | `Share Tech Mono` | `text-sm` | normal | `tracking-wider` | `uppercase text-muted-foreground` |
+| **Tagline** | `Share Tech Mono` | `text-[10px]` | normal | `tracking-[0.3em]` | `uppercase text-muted-foreground` |
+| **Slider captions** | `VT323` (`font-display`) | `text-xs` | normal | `tracking-wide` | `italic text-lcd-dim` |
+| **Code/data** | `font-mono` | `text-xs` | normal | default | Template expressions, JSON |
+| **Accordion trigger** | `Share Tech Mono` | `text-sm` | `font-semibold` | `tracking-widest` | `uppercase` |
 
-- All UI text uses monospace (`--font-sans`)
-- Display/decorative text (header branding, slider labels) uses `--font-display`
-- Label pattern: `text-sm uppercase tracking-wider text-muted-foreground`
-- Sub-label pattern: `font-display text-xs italic text-lcd-dim tracking-wide`
+All fonts are monospace. No sans-serif anywhere.
 
 ---
 
 ## Spacing
 
-**Base unit: 4px (Tailwind default)**
+**Base unit:** 4px (Tailwind default)
 
-Observed scale: `1` (4px), `1.5` (6px), `2` (8px), `2.5` (10px), `3` (12px), `4` (16px), `5` (20px), `6` (24px)
-
-Common patterns:
-- Component internal gap: `gap-2` (8px)
-- Section gap: `gap-4` (16px) to `gap-6` (24px)
-- Container padding: `px-4 py-2` (header), `px-2.5 pb-2.5` (toolbar), `px-6 py-5` (editor panel)
-- Toolbar item spacing: `gap-2.5` (10px)
-- Timeline item margin: should be `ml-1` (4px) — currently 5px (violation)
+### Common patterns
+| Context | Values |
+|---------|--------|
+| **Section padding** | `px-4 py-2` (header), `px-6 py-5` (editor panel), `p-6` (dialogs) |
+| **Controls bar** | `px-2.5 pb-2.5` |
+| **Track row** | `px-2.5 py-1` (options), `p-2` (timeline) |
+| **Gaps** | `gap-1` (tight groups), `gap-2` (form fields), `gap-4` (dialog sections), `gap-5` (editor panel items), `gap-6` (settings columns) |
+| **Segment chips** | `px-2 py-1.5 ml-1` |
 
 ---
 
-## Radii
+## Depth
 
-| Token | Value | Usage |
-|---|---|---|
-| `--radius` | `2px` | Default — calculator-boxy feel |
+### Elevation model
+The app uses a **border + bevel** system, not box-shadows for elevation. Shadows are reserved for two specific uses:
+
+1. **`calc-button` bevel** — 3D pressed-plastic effect:
+   ```
+   border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222]
+   shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)]
+   active: shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] translate-y-px
+   ```
+
+2. **LCD inset** — recessed screen effect (domain toggle, graph container):
+   ```
+   shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]
+   ```
+
+3. **Dropdown menus** — minimal pixel shadow:
+   ```
+   shadow-[1px_1px_0px_#111]
+   ```
+
+4. **`glow-lcd`** — drag feedback:
+   ```
+   shadow-[0_0_8px_rgba(51,255,102,0.3)]
+   ```
+
+### Surface stacking (bottom to top)
+`background` → `surface` → `surface-alt` → `lcd-bg` (recessed into surface)
+
+---
+
+## Corners
+
+Boxy. This is a calculator, not a phone app.
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--radius` | `2px` | Default, buttons |
 | `--radius-sm` | `2px` | Small elements |
-| `--radius-md` | `3px` | Medium elements |
-| `--radius-lg` | `4px` | Larger containers |
-| `--radius-xl` | `6px` | Dialogs |
-
-All radii are intentionally tight for the retro calculator aesthetic. `.calc-button` forces `border-radius: 2px`.
+| `--radius-md` | `3px` | Inputs, dialogs |
+| `--radius-lg` | `4px` | Containers |
+| `--radius-xl` | `6px` | Outer wrappers (rare) |
 
 ---
 
-## Depth Strategy: **Embossed Borders**
+## Components
 
-The system uses a calculator-button embossing approach, not drop shadows or flat borders.
+### Buttons (`calc-button`)
+All interactive buttons use the `calc-button` utility class for the beveled 3D effect. This applies on top of shadcn `Button` variants.
 
-### `.calc-button` — The Core Pattern
-```css
-border: 1px solid #444;
-border-top-color: #555;      /* light from top-left */
-border-left-color: #555;
-border-bottom-color: #222;   /* shadow on bottom-right */
-border-right-color: #222;
-box-shadow: 1px 1px 0px #111, inset 0 1px 0 rgba(255,255,255,0.08);
+- **Play/Pause:** `bg-primary text-primary-foreground` + `calc-button`
+- **Stop:** `bg-accent text-accent-foreground` + `calc-button`
+- **Settings:** `bg-secondary text-secondary-foreground` + `calc-button`
+- **Track controls:** `variant="secondary" size="sm"` + `calc-button`
+- **Template dropdowns:** Native `<button>` + `calc-button bg-secondary`
+- **Ghost buttons** (delete, add segment): No `calc-button`, just `variant="ghost"`
+
+### Inputs
+- Height: `h-11` in editor panel, `h-8` in track options
+- Always `text-base` at `h-11`, `text-sm` at `h-8`
+- Error state: `border-destructive`
+- Paired with `<Label>` using the standard label pattern
+
+### Form Fields
+Reusable `<FormField>` wraps `Label` + `Input` + error message:
+```
+<div className="flex flex-col gap-2">
+  <Label className="text-sm text-muted-foreground uppercase tracking-wider">
+  <Input className="h-11 text-base" />
+  {error && <p className="text-sm text-destructive">}
+</div>
 ```
 
-Active state depresses:
-```css
-box-shadow: 0 0 0 #111, inset 0 1px 2px rgba(0,0,0,0.3);
-transform: translateY(1px);
+### Toggle Groups (wave type selector)
+Items use `calc-button` + LCD highlight for active state:
+```
+data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight
 ```
 
-### Drag glow (LCD phosphor effect)
-```css
-box-shadow: 0 0 8px rgba(51,255,102,0.3), 1px 1px 0px #111;
+### Segment Chips (track timeline)
+Draggable segments styled as small calculator keys:
 ```
-Used on: dragged timeline segments, dragged template items.
+calc-button rounded-sm px-2 py-1.5 text-sm
+Selected: bg-secondary text-highlight border-b-2 border-b-highlight
+Default: bg-surface text-foreground border-b-2 border-b-transparent
+Dragging: glow-lcd
+```
 
-### Allowed shadows
-- `.calc-button` emboss shadow (standard)
-- Drag glow (`rgba(51,255,102,0.3)`) for interactive feedback
-- LCD container inset (`inset 0 1px 3px rgba(0,0,0,0.5)`) — recessed screen effect on toggle/input containers
-- LCD text-shadow glow (`0 0 8px rgba(51,255,102,0.6)`) — phosphor glow on active LCD text
-- `shadow-xs` on shadcn inputs (framework default, acceptable)
-- No floating/elevation shadows — depth is communicated through borders and color
+### Dialogs (modals)
+- Standard shadcn Dialog with `bg-background`
+- Default max width: `sm:max-w-lg` or `sm:max-w-xl`
+- Padding: `p-6`, `gap-4`
+- Close button hidden via `showCloseButton={false}`; explicit footer buttons instead
 
----
-
-## Component Patterns
-
-### Button
-
-Uses shadcn `<Button>` with `class-variance-authority`.
-
-| Size | Height | Padding | Usage |
-|---|---|---|---|
-| `default` | `h-9` (36px) | `px-4 py-2` | Dialog actions |
-| `sm` | `h-8` (32px) | `px-3` | Toolbar buttons |
-| `xs` | `h-6` (24px) | `px-2` | Compact |
-| `icon` | `size-9` (36px) | — | Header icon buttons |
-| `icon-sm` | `size-8` (32px) | — | Inline icon buttons |
-
-Most buttons also get `className="calc-button"` for the embossed border effect.
-
-### Input
-
-Uses shadcn `<Input>`.
-
-| Context | Height | Class |
-|---|---|---|
-| Form fields (editor panel) | `h-11` (44px) | `text-base` |
-| Compact (toolbar/track options) | `h-8` (32px) | `text-sm` |
-
-Standard: `h-9` from shadcn default. The app overrides to `h-11` in form contexts for touch-friendly sizing.
-
-### FormField
-
-Reusable `<FormField>` component (`src/components/ui/form-field.tsx`):
-- Label + Input + error message
-- Label style: `text-sm text-muted-foreground uppercase tracking-wider`
-- Input: `h-11 text-base`
-- Error: `text-sm text-destructive`
-- Wrapper: `flex flex-col gap-2`
-
-### Dialog / Modal
-
-Uses shadcn `<Dialog>`.
-- Max width: `sm:max-w-xl` (settings, save, load) or `sm:max-w-lg` (alert)
-- `showCloseButton={false}` — all modals use explicit footer buttons
-- Footer pattern: secondary "Cancel/Close/Defaults" left, primary action right
-- Standard structure: `DialogHeader` > `DialogTitle` > content > `DialogFooter`
-
-### Accordion (Editor)
-
-Single collapsible accordion wrapping the timeline editor.
-- Trigger: `bg-surface-alt px-4 py-2 text-sm font-semibold uppercase tracking-widest`
-- Content: `p-0` (manages own padding internally)
-
-### Timeline Segment (Drag Item)
-
-Inline-styled (legacy — should migrate to Tailwind):
-- Background: `surface` / `surface` selected variant
-- Selected indicator: `2px solid lcd-green` bottom border
-- Font: `0.875rem` (14px) monospace
-- Embossed borders matching `.calc-button` pattern
-
-### Template Dropdown
-
-Custom dropdown (not shadcn Popover):
-- Trigger: `calc-button` styled `<button>` with chevron
-- Panel: absolute positioned, `bg-[#1a1a1e]` with embossed border
-- Items: draggable, highlight to `lcd-green` on hover/drag
+### Graph (LCD screen)
+Container: `lcd-scanlines lcd-pixel-grid relative border-2 border-border bg-lcd-bg`
+- Scanline overlay via `::after` pseudo-element
+- Optional pixel grid overlay composited with scanlines
+- Visx SVG with phosphor-colored traces
+- Playhead: dashed green line with gaussian blur glow filter
 
 ### Domain Toggle
+Custom segmented control styled as LCD sub-display:
+- `bg-lcd-bg border-lcd-dim`
+- Active state: `text-highlight` with text-shadow glow `0_0_8px_rgba(51,255,102,0.6)`
+- Sliding indicator: `bg-highlight/8 border-highlight/15`
 
-Custom CSS toggle (`index.css`):
-- LCD-style inset container
-- Active state: `lcd-green` text with glow
-- Inactive: `lcd-dim` text
-
-### Range Slider
-
-Custom CSS (`index.css .infinite-slider`):
-- Track: `6px` height, `lcd-grid` background
-- Thumb: `14px` square, `lcd-green`, `2px` radius, green glow
-- Label below: `font-display text-xs italic text-lcd-dim`
+### Solar Panel
+Decorative header stripe:
+```
+h-2 bg-[repeating-linear-gradient(to_right,#1a1a1e_0px,#1a1a1e_3px,#0e0e12_3px,#0e0e12_4px)]
+```
 
 ---
 
-## LCD Screen Pattern
+## Transitions
 
-Applied via `.lcd-screen` class:
-- `background-color: lcd-bg`
-- Scanline overlay via `::after` pseudo-element
-- Optional `.lcd-pixel-grid` adds cross-hatch pattern (used on graph)
-
-Used on: Graph container, Editor panel
-
----
-
-## Layout
-
-- Full viewport height: `h-screen flex flex-col overflow-hidden`
-- Top: solar panel (8px decorative stripe)
-- Header: `border-b border-border bg-surface-alt px-4 py-2`
-- Main area: `flex-1 flex-col justify-end overflow-hidden`
-  - Graph: `flex-1 min-h-0` (fills available space)
-  - Editor: `flex-none` (accordion, collapses)
+| Context | Duration | Properties |
+|---------|----------|------------|
+| Button press | `75ms` | `all` (via `transition-all`) |
+| Segment hover/select | `75ms` | `background, color, border-color, box-shadow` |
+| Domain toggle slide | `200ms` | `transform` with `cubic-bezier(0.4, 0, 0.2, 1)` |
+| Domain toggle text | `150ms` | `colors` |
+| Accordion | `200ms` | `transform` (chevron), built-in radix animation |
+| Dialog | `200ms` | `fade + zoom (95%)` |
 
 ---
 
-## Icon System
+## Syntax Highlighting
 
-- **Lucide React** for UI icons (Play, Pause, Plus, Trash2, etc.)
-- **MDI paths** (`@mdi/js`) for wave type icons (sine, triangle, sawtooth)
-- Standard icon size: `size-4` (16px) in buttons, `size-5` (20px) in header
-- MDI icons rendered via inline `<svg viewBox="0 0 24 24" className="size-5 fill-current">`
+Math expressions are colorized consistently in both the equation input (CSS overlay) and KaTeX output (LaTeX `\textcolor`):
+
+| Token type | Color | Token |
+|------------|-------|-------|
+| Functions (`sin`, `cos`, etc.) | `#66aaff` | `func-blue` |
+| Constants (`pi`, `e`) | `#33ff66` | `lcd-green` |
+| Variable (`x`) | `#33ff66` | `lcd-green` |
+| Numbers | `#d4a017` | `amber` |
+| Operators (`+`, `-`, `*`, `/`) | `#cc3333` | `accent` |
+| Parentheses | `#808078` | `muted-foreground` |
+
+---
+
+## Layout Structure
+
+```
+┌─ solar-panel (decorative 2px stripe) ─────────────────────┐
+├─ header (surface-alt, border-b) ──────────────────────────┤
+│  Logo/title  │  spacer  │  Play │ Pause │ Stop │ Settings │
+├─ graph (lcd-bg, flex-1, lcd-scanlines) ───────────────────┤
+│  Visx SVG with traces + playhead                          │
+├─ accordion trigger (surface-alt) ─────────────────────────┤
+├─ editor controls (surface-alt) ───────────────────────────┤
+│  +Track │ Templates... │ Domain │ Load │ Save              │
+├─ track rows ──────────────────────────────────────────────┤
+│  TrackOptions │ TrackTimeline (droppable segment chips)    │
+├─ editor panel (lcd-bg, lcd-scanlines) ────────────────────┤
+│  Title │ Equation │ Length │ Volume │ Output │ Delete      │
+└───────────────────────────────────────────────────────────┘
+```
+
+Graph takes `flex-1` and fills available space. Editor is `flex-none` at the bottom.
+
+---
+
+## Rules
+
+1. **Everything is monospace.** No sans-serif fonts.
+2. **Buttons get beveled.** Any clickable rectangle uses `calc-button` unless it's a ghost/link.
+3. **LCD surfaces are recessed.** Graph and editor panel use `lcd-bg` with scanline overlays.
+4. **Shell surfaces stack by brightness.** `background` < `surface` < `surface-alt`.
+5. **Green means active/selected.** `highlight` (`#33ff66`) is the primary signal color within LCD contexts.
+6. **Shadows serve physics, not aesthetics.** Bevel = raised plastic. Inset = recessed screen. Glow = phosphor bleed.
+7. **Corners stay tight.** 2-4px. No pill shapes except Switch.
+8. **Labels are ALL CAPS.** `text-sm uppercase tracking-wider text-muted-foreground`.
+9. **Transitions are fast.** 75ms for direct interaction, 150-200ms for position/transform.
+10. **No dark mode toggle.** The app is permanently dark — it's a calculator, not a website.
