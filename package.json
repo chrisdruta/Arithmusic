@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "claude-design-audit": "claude -p 'Run a design system audit against docs/system.md, fix all violations, run tsc --noEmit, and update the audit doc' --allowedTools 'Read,Edit,Write,Bash,Glob,Grep'"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
