@@ -81,7 +81,7 @@ LCD slider thumb and track sizes use rem units in `index.css` so they scale with
 
 Unselected tracks render at `0.3` opacity. Selected track renders at full opacity, `strokeWidth: 2`.
 
-Track colors appear in four places: graph traces, timeline LED indicators, segment editor accent strip, and panel header dots.
+Track colors appear in five places: graph traces, graph legend, timeline LED indicators, segment editor accent strip, and panel header dots.
 
 ---
 
@@ -240,6 +240,7 @@ Items use `variant="calc"` (defined as a toggle cva variant in `toggle.tsx`) + L
 variant="calc" → bevel borders + shadow
 data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight
 ```
+Collapsed state shows a single `calc-secondary` button with the active wave icon + `ChevronRight` (`size-3 text-muted-foreground`) to signal expandability. `gap-0.5` keeps the chevron tight against the icon. Clicking expands to the full `ToggleGroup`.
 
 ### Segment Chips (track timeline)
 Draggable segments styled as small calculator keys with inline bevel styles (not a Button component — these are `<div>` elements within drag-and-drop):
@@ -249,6 +250,8 @@ Selected: bg-secondary text-highlight border-b-2 border-b-highlight
 Default: bg-surface text-foreground border-b-2 border-b-transparent
 Dragging: glow-lcd
 ```
+
+**Proportional width:** Chips use `flexGrow` proportional to `segment.length.value` (ms), with `flexShrink: 0, flexBasis: 0, minWidth: '3rem'`. Longer segments appear visually wider. When one track is shorter than the longest track, a trailing spacer div fills the remainder so all tracks share the same time scale. DnD `provided.draggableProps.style` must be spread **after** custom styles so drag positioning overrides during drag.
 
 ### Panel Headers
 Thin label bars at the top of major zones. Pattern:
@@ -279,6 +282,19 @@ Container: `lcd-scanlines lcd-pixel-grid relative border-[3px] border-border bor
 - SVG margins and axis font sizes are computed from `rem` (scale with root font-size)
 - Playhead: dashed green line with gaussian blur glow filter
 - Takes `flex-1` within its column to fill all available vertical space
+- **Legend:** SVG-native `<Group>` in top-right corner. Colored line swatches (20px) + track titles in `fontFamily` at `tickFontSize`. Semi-transparent `bgColor` background rect at 0.75 opacity. Selected track at full opacity, others at `dimOpacity`. Reads from `state.timelines[idx].options.title`.
+
+### Popovers (LCD reference cards)
+Radix Popover primitives used inline — no shadcn wrapper component. Import pattern: `import { Popover as PopoverPrimitive } from 'radix-ui'` (v1.4.3 installed). Styled as LCD-recessed cards:
+```
+z-50 rounded-sm border border-lcd-dim bg-lcd-bg p-3
+shadow-[inset_0_1px_3px_rgba(0,0,0,0.4),0_4px_16px_rgba(0,0,0,0.5)]
+animate-in fade-in-0 zoom-in-95
+```
+Content uses `font-mono text-xs` with section headers in `uppercase tracking-widest text-muted-foreground`. Triggered by `CircleHelp` icon button (`size="icon-xs"`, `text-muted-foreground hover:text-highlight`).
+
+### Hint Text
+Contextual hints below labels use the same style as slider captions: `font-display text-xs italic text-lcd-dim tracking-wide`. Used for `x = time (s)` below the equation label, `Infini-Slide` below the length slider. Provides context without cluttering the label itself.
 
 ### Domain Toggle
 Custom segmented control styled as LCD sub-display. **Vertical orientation** in the left control column:
@@ -419,5 +435,12 @@ Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a con
 9. **Transitions are fast.** 75ms for direct interaction, 150-200ms for position/transform.
 10. **No dark mode toggle.** The app is permanently dark — it's a calculator, not a website.
 11. **One physical object.** Zones are flush — no gaps between sections. Borders (`border-r`, `border-l`, `border-t`, `border-border/50`) handle visual separation. Each zone reads as a molded section of the calculator body, not a floating card.
-12. **Track colors thread through.** The same track color (green/amber/blue/red) appears on graph traces, timeline LED indicators, segment editor accent strip, and panel header dots — creating a visual connection across zones.
+12. **Track colors thread through.** The same track color (green/amber/blue/red) appears on graph traces, graph legend, timeline LED indicators, segment editor accent strip, and panel header dots — creating a visual connection across zones.
 13. **Sizes scale with viewport.** Use rem-based values (standard Tailwind classes). The responsive root font-size handles display adaptation automatically. No hardcoded px for text, spacing, or interactive element sizes.
+14. **Expandable controls use chevrons.** Collapsed controls that expand on click include a small directional chevron (`size-3 text-muted-foreground`) indicating the expansion direction. `ChevronRight` for horizontal, `ChevronDown` for vertical/dropdown.
+
+---
+
+## UX Audit
+
+Simulated user testing results tracked in `.interface-design/ux-audit-2026-02-16.md`. 23 findings prioritized Critical → Low with fix status tracking. Consult before building new features to avoid re-introducing addressed friction.

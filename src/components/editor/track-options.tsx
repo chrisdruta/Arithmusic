@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Minus, VolumeX } from 'lucide-react';
+import { ChevronRight, Minus, VolumeX } from 'lucide-react';
 import { mdiSineWave, mdiTriangleWave, mdiSawtoothWave } from '@mdi/js';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,10 +46,11 @@ function WaveSelect({ rowIndex }: { rowIndex: number }) {
         variant="calc-secondary"
         size="sm"
         onClick={() => setExpanded(true)}
-        className="text-highlight"
+        className="gap-0.5 text-highlight"
         aria-label={`Wave: ${selected.label}. Click to change.`}
       >
         <MdiIcon path={selected.path} />
+        <ChevronRight className="size-3 text-muted-foreground" />
       </Button>
     );
   }

@@ -9,7 +9,7 @@ import { curveLinear } from '@visx/curve';
 import { SampleTrackGraph } from '../lib/synthesize';
 import { useComposition } from '../context/CompositionContext';
 
-const fontFamily = '"Share Tech Mono", monospace';
+const fontFamily = '"TICELarge", "Share Tech Mono", monospace';
 const trackColors = [
   'var(--color-lcd-green)',
   'var(--color-amber)',
@@ -138,6 +138,35 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
           stroke={gridColor}
           tickStroke={gridColor}
         />
+        {/* Legend */}
+        {(() => {
+          const legendLineW = 20;
+          const legendRowH = 1.25 * rem;
+          const legendPadX = 0.5 * rem;
+          const legendPadY = 0.375 * rem;
+          const legendW = legendLineW + legendPadX * 2 + 8 * rem;
+          const legendH = legendPadY * 2 + timelines.length * legendRowH;
+          const legendX = innerWidth - legendW - 0.5 * rem;
+          const legendY = 0.5 * rem;
+          return (
+            <Group left={legendX} top={legendY}>
+              <rect width={legendW} height={legendH} rx={2} fill={bgColor} fillOpacity={0.75} stroke={gridColor} strokeWidth={0.5} />
+              {timelines.map((tl, idx) => {
+                const color = trackColors[idx % trackColors.length];
+                const isSelected = idx === selectedSegment.row;
+                const y = legendPadY + idx * legendRowH + legendRowH / 2;
+                return (
+                  <g key={idx} opacity={isSelected ? 1 : dimOpacity}>
+                    <line x1={legendPadX} x2={legendPadX + legendLineW} y1={y} y2={y} stroke={color} strokeWidth={2} />
+                    <text x={legendPadX + legendLineW + 6} y={y} fill={color} fontSize={tickFontSize} fontFamily={fontFamily} dominantBaseline="central">
+                      {tl.options.title}
+                    </text>
+                  </g>
+                );
+              })}
+            </Group>
+          );
+        })()}
         {playbackTime !== null && playbackTime >= 0 && playbackTime <= xMax && (
           <>
             {/* Soft phosphor glow layer */}

@@ -9,6 +9,14 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
   const segments = state.timelines[rowIndex].segments;
   const selectedSegment = state.selectedSegment;
 
+  // Compute max total duration across all tracks so shorter tracks get a trailing spacer
+  const trackTotalMs = segments.reduce((sum, s) => sum + Math.max(s.length.value, 1), 0);
+  const maxTotalMs = state.timelines.reduce(
+    (max, tl) => Math.max(max, tl.segments.reduce((sum, s) => sum + Math.max(s.length.value, 1), 0)),
+    0
+  );
+  const remainderMs = maxTotalMs - trackTotalMs;
+
   return (
     <Droppable droppableId={String(rowIndex)} direction="horizontal">
       {(provided, snapshot) => (
@@ -29,10 +37,16 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    style={provided.draggableProps.style as React.CSSProperties | undefined}
+                    style={{
+                      flexGrow: Math.max(segment.length.value, 1),
+                      flexShrink: 0,
+                      flexBasis: 0,
+                      minWidth: '3rem',
+                      ...(provided.draggableProps.style as React.CSSProperties | undefined),
+                    }}
                     onClick={() => dispatch({ type: 'SEGMENT_SELECT', row: rowIndex, col: colIndex })}
                     className={cn(
-                      "ml-1 select-none self-center truncate rounded-sm px-2 py-1.5 text-sm transition-all duration-75",
+                      "ml-1 select-none self-stretch truncate rounded-sm px-2 py-1.5 text-sm transition-all duration-75",
                       "border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222] shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)] active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px",
                       isSelected
                         ? "bg-secondary text-highlight border-b-2 border-b-highlight [text-shadow:0_0_8px_rgba(51,255,102,0.4)]"
@@ -46,6 +60,9 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
               </Draggable>
             );
           })}
+          {remainderMs > 0 && (
+            <div style={{ flexGrow: remainderMs, flexShrink: 0, flexBasis: 0 }} />
+          )}
           {provided.placeholder}
           <div className="mx-1 self-stretch border-r border-border/40" />
           <Button
