@@ -38,7 +38,7 @@ export default function InfiniteSlider({ valueMs, error, onChange }: {
   };
 
   return (
-    <div className="flex w-44 flex-col gap-2">
+    <div className="flex w-full flex-col gap-2">
       <Label htmlFor="length" className="text-sm uppercase tracking-wider text-muted-foreground">
         Length (s)
       </Label>

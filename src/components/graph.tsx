@@ -9,7 +9,6 @@ import { curveLinear } from '@visx/curve';
 import { SampleTrackGraph } from '../lib/synthesize';
 import { useComposition } from '../context/CompositionContext';
 
-const margin = { top: 40, left: 95, right: 50, bottom: 85 };
 const fontFamily = '"Share Tech Mono", monospace';
 const trackColors = [
   'var(--color-lcd-green)',
@@ -26,6 +25,12 @@ const tickColor = 'var(--color-lcd-green)';
 function Chart({ width, height, playbackTime }: { width: number; height: number; playbackTime: number | null }) {
   const { state } = useComposition();
   const { settings, timelines, selectedSegment } = state;
+
+  // Scale SVG margins and font sizes with the responsive root font-size
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const margin = { top: 2.5 * rem, left: 6 * rem, right: 3.125 * rem, bottom: 5.3 * rem };
+  const labelFontSize = rem;
+  const tickFontSize = 0.875 * rem;
 
   const allTraces = useMemo(
     () =>
@@ -119,17 +124,17 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
           top={innerHeight}
           scale={xScale}
           label="Time (s)"
-          labelProps={{ fill: textColor, fontSize: 16, fontFamily, textAnchor: 'middle', dy: 12 }}
-          tickLabelProps={{ fill: tickColor, fontSize: 14, fontFamily }}
+          labelProps={{ fill: textColor, fontSize: labelFontSize, fontFamily, textAnchor: 'middle', dy: 0.75 * rem }}
+          tickLabelProps={{ fill: tickColor, fontSize: tickFontSize, fontFamily }}
           stroke={gridColor}
           tickStroke={gridColor}
         />
         <AxisLeft
           scale={yScale}
           label="Frequency (kHz)"
-          labelProps={{ fill: textColor, fontSize: 16, fontFamily, textAnchor: 'middle', dx: -18 }}
+          labelProps={{ fill: textColor, fontSize: labelFontSize, fontFamily, textAnchor: 'middle', dx: -1.125 * rem }}
           tickFormat={(v) => (Number(v) / 1000).toFixed(1)}
-          tickLabelProps={{ fill: tickColor, fontSize: 14, fontFamily }}
+          tickLabelProps={{ fill: tickColor, fontSize: tickFontSize, fontFamily }}
           stroke={gridColor}
           tickStroke={gridColor}
         />
@@ -189,7 +194,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
 
 export default function Graph({ playbackTime }: { playbackTime: number | null }) {
   return (
-    <div className="lcd-scanlines lcd-pixel-grid relative mx-2.5 my-2 min-h-0 flex-1 overflow-hidden rounded-sm border-2 border-border bg-lcd-bg shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]">
+    <div className="lcd-scanlines lcd-pixel-grid relative min-h-0 flex-1 overflow-hidden rounded-sm border-[3px] border-border border-t-[#555]/20 bg-lcd-bg shadow-[inset_0_2px_6px_rgba(0,0,0,0.6),inset_0_0_1px_rgba(0,0,0,0.8),0_0_8px_rgba(51,255,102,0.06)]">
       <ParentSize>
         {({ width, height }) => <Chart width={width} height={height} playbackTime={playbackTime} />}
       </ParentSize>

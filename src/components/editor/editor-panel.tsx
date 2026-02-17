@@ -16,15 +16,19 @@ export default function EditorPanel() {
   if (!segment) return null;
 
   const { title, expression, length, volume } = segment;
+  const trackColor = ['lcd-green', 'amber', 'func-blue', 'accent'][row % 4];
 
   return (
-    <div className="lcd-scanlines relative flex w-full items-center gap-5 bg-lcd-bg px-6 py-5 text-foreground min-h-[15vh]">
+    <div className="lcd-scanlines relative flex h-full flex-col gap-4 overflow-y-auto border-[3px] border-border bg-lcd-bg px-4 py-5 text-foreground shadow-[inset_0_2px_6px_rgba(0,0,0,0.6),inset_0_0_1px_rgba(0,0,0,0.8),0_0_8px_rgba(51,255,102,0.06)]">
+      <div
+        className="absolute inset-x-0 top-0 h-1.5"
+        style={{ backgroundColor: `var(--color-${trackColor})` }}
+      />
       <FormField
         label="Title"
         value={title.value}
         error={title.error}
         onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'title', value: e.target.value })}
-        wrapperClassName="w-32"
       />
       <EquationInput
         value={expression.value}
@@ -36,7 +40,7 @@ export default function EditorPanel() {
         error={length.error}
         onChange={(val) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'length', value: val })}
       />
-      <div className="flex w-28 flex-col gap-2">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="volume" className="text-sm uppercase tracking-wider text-muted-foreground">
           Volume (%)
         </Label>
@@ -61,11 +65,19 @@ export default function EditorPanel() {
         />
         {volume.error && <p className="text-sm text-destructive">{volume.error}</p>}
       </div>
+      <div className="border-t border-border/40" />
       <EditorOutput
         output={expression.error ? expression.error : expression.value}
         error={!!expression.error}
       />
-      <Button variant="ghost-destructive" size="icon" className="shrink-0" aria-label="Delete segment" onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}>
+      <div className="flex-1" />
+      <Button
+        variant="ghost-destructive"
+        size="icon"
+        className="shrink-0 self-end"
+        aria-label="Delete segment"
+        onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}
+      >
         <Trash2 className="size-5" />
       </Button>
     </div>

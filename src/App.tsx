@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { CompositionProvider, useComposition, computeErrors, exportCompositionJson } from './context/CompositionContext';
 import { SynthesizeComposition } from './lib/synthesize';
 import Graph from './components/graph';
-import Editor from './components/editor';
+import { TimelinePanel, SegmentPanel } from './components/editor';
 import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
+import DomainToggle from './components/editor/domain-toggle';
 
 const RANDOM_TAG_LINES = [
   "ARITHMETIC SYNTH",
@@ -134,42 +135,77 @@ function AppContent() {
   }, [stopPlaybackAnimation]);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <div className="solar-panel w-full" />
-      <header className="flex items-center gap-3 border-b border-border bg-surface-alt px-4 py-2">
-        <div className="flex flex-col select-none leading-tight">
-          <span className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            Arithmusic
-          </span>
-          <span className="font-display text-xl font-bold tracking-tight text-foreground">
-            fx-AM1 <span className="ml-2 text-xs font-normal uppercase tracking-widest text-muted-foreground">{TAG_LINE}</span>
+    <div className="flex h-screen flex-col bg-shell-bg p-4 text-foreground">
+      {/* Calculator body */}
+      <div className="flex flex-1 flex-col overflow-hidden rounded-[0.5rem] bg-background shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_4px_24px_rgba(0,0,0,0.5)]">
+        {/* Top bezel — branding (mirrors TI-92 "TEXAS INSTRUMENTS / TI-92 II" placement) */}
+        <div className="flex items-center justify-between border-b border-border/40 bg-surface-alt/50 px-5 py-2.5">
+          <div className="flex items-baseline gap-3">
+            <span className="font-display text-base uppercase tracking-[0.3em] text-muted-foreground">
+              Arithmusic
+            </span>
+            <span className="font-display text-lg font-bold tracking-tight text-foreground">
+              fx-AM1
+            </span>
+          </div>
+          <span className="font-display text-base uppercase tracking-widest text-highlight/40 [text-shadow:0_0_6px_rgba(51,255,102,0.2)]">
+            {TAG_LINE}
           </span>
         </div>
-        <div className="flex-1" />
-        <div className="flex items-center gap-1">
-          <Button variant="calc" size="icon" onClick={handlePlay}>
-            <Play className="size-5" />
-          </Button>
-          <Button variant="calc" size="icon" onClick={handlePause}>
-            <Pause className="size-5" />
-          </Button>
+
+        {/* Upper region: control column + graph + segment editor */}
+        <div className="flex flex-[5] overflow-hidden">
+          {/* Left control column — function key strip */}
+          <div className="flex w-28 shrink-0 flex-col items-center gap-3 border-r border-border/50 bg-gradient-to-b from-surface-alt to-surface px-2 py-4">
+            {/* Playback controls */}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex gap-1">
+                <Button variant="calc" size="icon" onClick={handlePlay}>
+                  <Play className="size-5" />
+                </Button>
+                <Button variant="calc" size="icon" onClick={handlePause}>
+                  <Pause className="size-5" />
+                </Button>
+              </div>
+              <Button variant="calc-accent" className="w-full" onClick={handleStop}>
+                <Square className="size-5" />
+              </Button>
+            </div>
+
+            <div className="w-12 border-t border-border/40" />
+
+            {/* Domain toggle */}
+            <DomainToggle />
+
+            <div className="flex-1" />
+
+            <div className="w-12 border-t border-border/40" />
+
+            {/* Settings */}
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">Settings</span>
+            <Button variant="calc-secondary" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
+              <SlidersHorizontal className="size-5" />
+            </Button>
+          </div>
+
+          {/* Graph (dominant LCD screen) */}
+          <div className="flex min-w-0 flex-1 flex-col">
+            <Graph playbackTime={playbackTime} />
+          </div>
+
+          {/* Segment editor panel (right) */}
+          <SegmentPanel />
         </div>
-        <Button variant="calc-accent" size="icon" onClick={handleStop}>
-          <Square className="size-5" />
-        </Button>
-        <div className="mx-1 self-stretch border-r border-border/40" />
-        <Button variant="calc-secondary" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
-          <SlidersHorizontal className="size-5" />
-        </Button>
-      </header>
-      <div className="flex flex-1 flex-col justify-end overflow-hidden">
-        <Graph playbackTime={playbackTime} />
-        <Editor />
-        <LoadModal />
-        <SaveModal />
-        <SettingsModal />
-        <AlertModal />
+
+        {/* Bottom: Timeline */}
+        <div className="flex-[2] overflow-hidden border-t border-border/50">
+          <TimelinePanel />
+        </div>
       </div>
+      <LoadModal />
+      <SaveModal />
+      <SettingsModal />
+      <AlertModal />
     </div>
   );
 }
