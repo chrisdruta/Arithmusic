@@ -113,7 +113,7 @@ export function SegmentPanel() {
     : null;
 
   return (
-    <div className="flex w-80 shrink-0 flex-col overflow-hidden border-l border-border/50 bg-surface">
+    <div className="flex w-80 shrink-0 flex-col overflow-hidden border-l border-border/50 bg-gradient-to-b from-surface-alt to-surface">
       <div className="groove-bottom flex items-center gap-2 bg-surface-alt px-3 py-1.5">
         <Led
           color={trackColor ? `var(--color-${trackColor})` : 'var(--color-muted-foreground)'}

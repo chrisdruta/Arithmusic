@@ -166,9 +166,13 @@ function AppContent() {
   }, [stopPlaybackAnimation]);
 
   return (
-    <div className="flex h-screen flex-col bg-shell-bg p-4 text-foreground">
-      {/* Calculator body */}
-      <div className="flex flex-1 flex-col overflow-hidden rounded-[0.5rem] bg-background shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_4px_24px_rgba(0,0,0,0.5)]">
+    <div className="flex h-screen flex-col bg-[#2f2b38] px-3 py-5 text-foreground">
+      {/* Calculator assembly — body + ribbed grip strips */}
+      <div className="calc-frame flex flex-1 overflow-hidden rounded-[0.75rem]">
+        {/* Left ribbed grip */}
+        <div className="grip-ribs w-3.5 shrink-0 shadow-[inset_-2px_0_3px_rgba(0,0,0,0.5)]" />
+        {/* Calculator body */}
+        <div className="flex flex-1 flex-col overflow-hidden bg-background">
         {/* Top bezel — branding (mirrors TI-92 "TEXAS INSTRUMENTS / TI-92 II" placement) */}
         <div className="flex items-center justify-between border-b border-border/40 bg-surface-alt/50 px-5 py-2.5">
           <div className="flex items-baseline gap-3">
@@ -220,7 +224,7 @@ function AppContent() {
           </div>
 
           {/* Graph (dominant LCD screen) */}
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex min-w-0 flex-1 flex-col p-4">
             <Graph playbackTime={playbackTime} />
           </div>
 
@@ -229,9 +233,12 @@ function AppContent() {
         </div>
 
         {/* Bottom: Timeline */}
-        <div className="flex-[2] overflow-hidden border-t border-border/50">
+        <div className="groove flex-[2] overflow-hidden border-t border-border/50">
           <TimelinePanel />
         </div>
+        </div>
+        {/* Right ribbed grip */}
+        <div className="grip-ribs w-3.5 shrink-0 shadow-[inset_2px_0_3px_rgba(0,0,0,0.5)]" />
       </div>
       <LoadModal />
       <SaveModal />

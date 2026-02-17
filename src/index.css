@@ -113,6 +113,35 @@ body {
     @apply pointer-events-none absolute right-0 bottom-0 left-0 z-2 h-[2px];
     background: linear-gradient(to bottom, #111 0%, #111 50%, #3a3a3880 50%, #3a3a3880 100%);
   }
+
+  /* TI-92 ribbed grip strips — horizontal ridges running vertically */
+  .grip-ribs {
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        #1a1a1c 0px,
+        #1a1a1c 2px,
+        #252527 2px,
+        #252527 3px,
+        #2e2e30 3px,
+        #2e2e30 4px
+      );
+  }
+
+  /* Calculator body frame — beveled plastic lip with physical depth */
+  .calc-frame {
+    border: 3px solid;
+    border-color: #444 #1a1a1a #111 #333;
+    box-shadow:
+      /* inner top-edge highlight — light catching the lip */
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      /* outer thin outline — crisp device edge */
+      0 0 0 1px rgba(0, 0, 0, 0.6),
+      /* tight near-shadow — device thickness sitting on surface */
+      0 2px 6px rgba(0, 0, 0, 0.5),
+      /* wide ambient shadow — device weight on desk */
+      0 8px 40px rgba(0, 0, 0, 0.7);
+  }
 }
 
 /* --- Pseudo-element effects (cannot be expressed in Tailwind) --- */

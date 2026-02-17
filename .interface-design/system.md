@@ -11,7 +11,7 @@
 ## Direction
 
 **Domain:** Scientific calculators, LCD displays, phosphor screens, graphing calculator UI
-**Metaphor:** The entire app is one physical calculator sitting on a dark desk. The top bezel carries the brand name. The graph is the main LCD screen. The left column is the function key strip. The right panel is a secondary LCD display. The bottom timeline is the keyboard/keypad area. The rounded outer frame is the injection-molded body.
+**Metaphor:** The entire app is one physical calculator sitting on a muted desk surface. The top bezel carries the brand name. The graph is the main LCD screen. The left column is the function key strip. The right panel is a secondary LCD display. The bottom timeline is the keyboard/keypad area. The rounded outer frame is the injection-molded body.
 **Signature elements:** Calculator body frame with visible bezel, top branding strip, LCD scanlines + pixel grid, beveled `calc` button variants, phosphor glow on active states, flush zone separation via molded borders
 
 ---
@@ -45,7 +45,7 @@ LCD slider thumb and track sizes use rem units in `index.css` so they scale with
 ### Shell (calculator body)
 | Token | Hex | Role |
 |-------|-----|------|
-| `shell-bg` | `#0a0a0a` | Page background — the "desk" behind the calculator |
+| `shell-bg` | `#2f2b38` | Page background — muted plum-slate "desk" surface. Lighter than the calculator body to create contrast and physical depth. Applied via `bg-[#2f2b38]` on the desk div (overrides the CSS variable) |
 | `background` | `#1c1c1e` | Calculator body, deepest shell surface |
 | `surface` | `#222224` | Track rows, mid-level panels, timeline body |
 | `surface-alt` | `#2c2c2e` | Panel headers, controls bar, left control column gradient, top bezel fill |
@@ -112,7 +112,8 @@ Body and labels remain monospace (Share Tech Mono). Buttons use the TI-92 Plus P
 ### Common patterns
 | Context | Values |
 |---------|--------|
-| **Shell padding** | `p-4` (desk space around the calculator body) |
+| **Shell padding** | `px-3 py-5` (desk space around the calculator assembly) |
+| **Graph wrapper** | `p-4` (bezel margin — exposes `bg-background` around the LCD screen) |
 | **Top bezel** | `px-5 py-2.5` |
 | **Control column** | `px-2 py-4`, `gap-3` between groups |
 | **Segment editor panel** | `px-4 py-5`, `gap-4` between fields |
@@ -128,7 +129,7 @@ Body and labels remain monospace (Share Tech Mono). Buttons use the TI-92 Plus P
 ## Depth
 
 ### Elevation model
-The app uses a **border + bevel** system, not box-shadows for elevation. Shadows are reserved for specific physical effects:
+The app uses a **border + bevel** system. Shadows serve specific physical effects (raised plastic, recessed screen, device-on-desk), never generic elevation:
 
 1. **`calc` variant bevel** — 3D pressed-plastic effect (defined in button.tsx + toggle.tsx cva variants):
    ```
@@ -157,9 +158,13 @@ The app uses a **border + bevel** system, not box-shadows for elevation. Shadows
    shadow-[0_0_8px_rgba(51,255,102,0.3)]
    ```
 
-6. **Calculator body frame** — hairline highlight edge + depth shadow (device sitting on desk):
+6. **Calculator assembly frame** — beveled plastic lip + multi-layer depth (`.calc-frame` in index.css):
    ```
-   shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_4px_24px_rgba(0,0,0,0.5)]
+   border: 3px solid; border-color: #444 #1a1a1a #111 #333;
+   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08),  /* top-edge highlight */
+               0 0 0 1px rgba(0,0,0,0.6),              /* crisp outline */
+               0 2px 6px rgba(0,0,0,0.5),              /* near shadow */
+               0 8px 40px rgba(0,0,0,0.7);             /* ambient shadow */
    ```
 
 7. **Track rows recess** — subtle inset on the track list container:
@@ -168,7 +173,7 @@ The app uses a **border + bevel** system, not box-shadows for elevation. Shadows
    ```
 
 ### Surface stacking (bottom to top)
-`shell-bg` (desk) → `background` (calculator body) → `surface-alt/50` (top bezel) → `surface` (panels, editor panel) → `surface-alt` (headers) → `lcd-bg` (recessed into surface — graph, individual input fields, output display)
+`shell-bg` (desk) → `grip-ribs` (side strips) → `background` (calculator body) → `surface-alt/50` (top bezel) → `surface` (panels, editor panel) → `surface-alt` (headers) → `lcd-bg` (recessed into surface — graph, individual input fields, output display)
 
 ---
 
@@ -183,11 +188,18 @@ Boxy. This is a calculator, not a phone app.
 | `--radius-md` | `3px` | Inputs, dialogs |
 | `--radius-lg` | `4px` | Containers |
 | `--radius-xl` | `6px` | Outer wrappers (rare) |
-| `rounded-[0.5rem]` | scales with root | Calculator body outer frame (the one exception — scales with viewport) |
+| `rounded-[0.75rem]` | scales with root | Calculator assembly outer frame (the one exception — scales with viewport) |
 
 ---
 
 ## Components
+
+### Grip Strips (ribbed side panels)
+Decorative elements flanking the calculator body inside the assembly wrapper. Mimic the TI-92's textured side grips. CSS class `grip-ribs` uses a `repeating-linear-gradient` with a 4px cycle (2px trough `#1a1a1c` + 1px ridge `#252527` + 1px highlight `#2e2e30`). `w-3.5` (14px, scales with root font-size). Inset box-shadow on the body-facing edge creates a seam:
+- Left: `shadow-[inset_-2px_0_3px_rgba(0,0,0,0.5)]`
+- Right: `shadow-[inset_2px_0_3px_rgba(0,0,0,0.5)]`
+
+The assembly's `overflow-hidden rounded-[0.75rem]` clips the grip strips into the body's corner curvature automatically.
 
 ### Buttons (calc variants)
 Beveled 3D button styles are proper `cva` variants in `button.tsx`, not CSS utilities. Each variant bundles the bevel effect (border-t/l `#555`, border-b/r `#222`, inset highlight, active press) with its color scheme.
@@ -279,6 +291,7 @@ Colored elements that identify which track a panel or row belongs to:
 
 ### Graph (LCD screen)
 Container: `lcd-scanlines lcd-pixel-grid relative border-[3px] border-border border-t-[#555]/20 bg-lcd-bg rounded-sm`
+- Wrapped in a `p-4` parent that exposes `bg-background` as a bezel frame around the screen
 - Scanline overlay via `::after` pseudo-element
 - Optional pixel grid overlay composited with scanlines
 - Visx SVG with phosphor-colored traces
@@ -377,35 +390,38 @@ Math expressions are colorized consistently in both the equation input (CSS over
 TI-92-inspired landscape layout. The entire app is a single calculator body sitting on a dark desk. Branding lives on a top bezel. Controls are in a vertical function key strip. Zones meet flush — borders, not gaps.
 
 ```
-┌─ p-4 desk padding (bg-shell-bg) ─────────────────────────────────┐
-│                                                                    │
-│  ┌─ calculator body (rounded-[0.5rem] bg-background + shadow) ──┐ │
-│  │  ARITHMUSIC   fx-AM1                    ALGORITHMIC AUDIO     │ │
-│  │  ─────────────── top bezel (bg-surface-alt/50) ─────────────  │ │
-│  │  ┌─ ctrl ─┐┌──── graph (flex-1) ──────┐┌─ segment panel ──┐  │ │
-│  │  │ [▶] [⏸]││                           ││ SEGMENT EDITOR ● │  │ │
-│  │  │ [■ STOP]││  lcd-scanlines            ││─────────────────│  │ │
-│  │  │─────────││  lcd-pixel-grid           ││ Title           │  │ │
-│  │  │ DOMAIN  ││  Visx SVG + playhead      ││ Equation f(x)  │  │ │
-│  │  │ [TIME]  ││                           ││ Length slider   │  │ │
-│  │  │ [BEAT]  ││                           ││ Volume slider   │  │ │
-│  │  │         ││                           ││─────────────────│  │ │
-│  │  │─────────││                           ││ Output (KaTeX)  │  │ │
-│  │  │SETTINGS ││                           ││            [🗑] │  │ │
-│  │  │  [⚙]   │└───────────────────────────┘└─────────────────┘  │ │
-│  │  └─────────┘─────────── border-t ──────────────────────────── │ │
-│  │  │ Timeline ●●● │ Track+ │ Notes▾ … │ Load │ Save           │ │
-│  │  │ ■ track rows with drag-and-drop segment chips              │ │
-│  │  │ □ ...                   (■ = LED on, □ = LED off)          │ │
-│  └──└────────────────────────────────────────────────────────────┘ │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
+┌─ px-3 py-5 desk padding (bg-shell-bg) ───────────────────────────────┐
+│                                                                        │
+│  ┌─ assembly (rounded-[0.75rem] overflow-hidden + shadow) ──────────┐ │
+│  │▓│ ARITHMUSIC   fx-AM1                    ALGORITHMIC AUDIO     │▓│ │
+│  │▓│ ─────────────── top bezel (bg-surface-alt/50) ─────────────  │▓│ │
+│  │▓│ ┌─ ctrl ─┐┌──── graph (flex-1) ──────┐┌─ segment panel ──┐  │▓│ │
+│  │▓│ │ [▶] [⏸]││                           ││ SEGMENT EDITOR ● │  │▓│ │
+│  │▓│ │ [■ STOP]││  lcd-scanlines            ││─────────────────│  │▓│ │
+│  │▓│ │─────────││  lcd-pixel-grid           ││ Title           │  │▓│ │
+│  │▓│ │ DOMAIN  ││  Visx SVG + playhead      ││ Equation f(x)  │  │▓│ │
+│  │▓│ │ [TIME]  ││                           ││ Length slider   │  │▓│ │
+│  │▓│ │ [BEAT]  ││                           ││ Volume slider   │  │▓│ │
+│  │▓│ │         ││                           ││─────────────────│  │▓│ │
+│  │▓│ │─────────││                           ││ Output (KaTeX)  │  │▓│ │
+│  │▓│ │SETTINGS ││                           ││            [🗑] │  │▓│ │
+│  │▓│ │  [⚙]   │└───────────────────────────┘└─────────────────┘  │▓│ │
+│  │▓│ └─────────┘─────────── border-t ──────────────────────────── │▓│ │
+│  │▓│ │ Timeline ●●● │ Track+ │ Notes▾ … │ Load │ Save           │▓│ │
+│  │▓│ │ ■ track rows with drag-and-drop segment chips              │▓│ │
+│  │▓│ │ □ ...                   (■ = LED on, □ = LED off)          │▓│ │
+│  │▓└─└────────────────────────────────────────────────────────────┘▓│ │
+│  └──────────────────────────────────────────────────────────────────┘ │
+│     ▓ = grip-ribs (ribbed grip strips, w-3.5)                          │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Zone proportions
 | Zone | Sizing | Notes |
 |------|--------|-------|
-| **Calculator body** | `flex-1` within `h-screen p-4` | `rounded-[0.5rem] bg-background overflow-hidden` + body frame shadow |
+| **Calculator assembly** | `flex-1` within `h-screen px-3 py-5` | `rounded-[0.75rem] overflow-hidden` + assembly frame shadow. Contains left grip + body + right grip |
+| **Calculator body** | `flex-1` within assembly | `bg-background overflow-hidden` (no rounding — clipped by assembly) |
+| **Grip strips** | `w-3.5 shrink-0` | `grip-ribs` CSS class. Inset shadow creates seam against body |
 | **Top bezel** | auto height | `bg-surface-alt/50 border-b border-border/40 px-5 py-2.5` |
 | **Left control column** | `w-28` fixed | `border-r border-border/50`, flush with bezel and timeline |
 | **Graph** | `flex-1` (fills remaining width) | Dominant element, ~70% of width |
@@ -428,9 +444,9 @@ Vertical function key strip (`bg-gradient-to-b from-surface-alt to-surface`). Gr
 4. **Settings** — "Settings" label + gear icon button
 
 ### Segment editor panel (right)
-Wrapped in `SegmentPanel` which provides the header and empty state. Separated from graph by `border-l border-border/50`. Two states:
-- **Selected**: `EditorPanel` — vertical `flex-col gap-4` layout on `bg-surface`. Individual input fields use `surface="lcd"` for recessed LCD styling. Output display has its own LCD container. Fields stack: Title → Equation → Length → Volume → divider → Output → delete button. Track color accent strip (`h-1`) at top.
-- **Empty**: Surface placeholder (`bg-surface`) with "SELECT A SEGMENT TO EDIT" centered in `text-muted-foreground/40`.
+Wrapped in `SegmentPanel` which provides the header and empty state. Uses `bg-gradient-to-b from-surface-alt to-surface` (matching the left control column for depth symmetry). Separated from graph by `border-l border-border/50`. Two states:
+- **Selected**: `EditorPanel` — vertical `flex-col gap-4` layout. Individual input fields use `surface="lcd"` for recessed LCD styling. Output display has its own LCD container. Fields stack: Title → Equation → Length → Volume → divider → Output → delete button. Track color accent strip (`h-1`) at top.
+- **Empty**: Gradient placeholder with "SELECT A SEGMENT TO EDIT" centered in `text-muted-foreground/40`.
 
 ### Editor Output Display
 KaTeX math output wrapped in an LCD-recessed container:
@@ -441,7 +457,7 @@ shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]
 Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a consistent "embedded screen" look across all data display elements in the editor.
 
 ### Timeline (bottom)
-`TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `border-t border-border/50`. The "Timeline" label and track color dots are merged into the `EditorControls` bar — no separate header row.
+`TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `groove border-t border-border/50` (plastic mold seam + border). The "Timeline" label and track color dots are merged into the `EditorControls` bar — no separate header row.
 
 ---
 
@@ -469,7 +485,7 @@ Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a con
 4. **Shell surfaces stack by brightness.** `background` < `surface` < `surface-alt`.
 5. **Green means active/selected.** `highlight` (`#33ff66`) is the primary signal color within LCD contexts.
 6. **Shadows serve physics, not aesthetics.** Bevel = raised plastic. Inset = recessed screen. Glow = phosphor bleed. Body frame = device on desk.
-7. **Corners stay tight.** 2-4px. No pill shapes except Switch. Calculator body uses `rounded-[0.5rem]` (the one exception — scales with viewport).
+7. **Corners stay tight.** 2-4px. No pill shapes except Switch. Calculator assembly uses `rounded-[0.75rem]` (the one exception — scales with viewport).
 8. **Labels are ALL CAPS.** `text-xs uppercase tracking-widest text-muted-foreground` (panel headers, control column labels).
 9. **Transitions are fast.** 75ms for direct interaction, 150-200ms for position/transform.
 10. **No dark mode toggle.** The app is permanently dark — it's a calculator, not a website.
