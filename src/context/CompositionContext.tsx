@@ -1,10 +1,11 @@
-import { createContext, useContext, useReducer, type Dispatch, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useReducer, useRef, type Dispatch, type ReactNode } from 'react';
 import { parse } from 'mathjs';
 import initialState from '../initial-state';
 import type {
   AppState,
   CompositionErrors,
   Segment,
+  SelectedSegment,
   Settings,
   Timeline,
   TimelineOptions,
@@ -22,7 +23,7 @@ export type Action =
   | { type: 'SEGMENT_REARRANGE'; rowIndex: number; sourceCol: number; destCol: number; segments: Segment[] }
   | { type: 'SEGMENT_MOVE_CROSS_TRACK'; sourceRow: number; sourceCol: number; destRow: number; destCol: number }
   | { type: 'ADD_SEGMENT'; rowIndex: number }
-  | { type: 'DELETE_SEGMENT' }
+  | { type: 'DELETE_SEGMENT'; row: number; col: number }
   | { type: 'TRACK_OPTION_CHANGE'; index: number; field: string; value: TimelineOptions['wave'] | string | null }
   | { type: 'ADD_TRACK' }
   | { type: 'DELETE_TRACK'; rowIndex: number }
@@ -31,7 +32,10 @@ export type Action =
   | { type: 'SET_ERRORS'; errors: CompositionErrors | null }
   | { type: 'LOAD_COMPOSITION'; timelines: Timeline[]; nextId: number }
   | { type: 'INSERT_SEGMENT'; row: number; col: number; segment: { title: string; expression: string; length: number; volume: number } }
-  | { type: 'ANIMATE_GRAPH' };
+  | { type: 'ANIMATE_GRAPH' }
+  | { type: 'UNDO' }
+  | { type: 'REDO' }
+  | { type: 'RESTORE_SNAPSHOT'; timelines: Timeline[]; selectedSegment: SelectedSegment; nextId: number };
 
 // ── Pure helpers ───────────────────────────────────────────────────
 
@@ -259,19 +263,18 @@ function compositionReducer(state: AppState, action: Action): AppState {
     }
 
     case 'DELETE_SEGMENT': {
-      const { row, col } = state.selectedSegment;
+      const { row, col } = action;
       const timelines = state.timelines.map((tl, ri) =>
         ri === row ? { ...tl, segments: tl.segments.filter((_, ci) => ci !== col) } : tl
       );
-      let newRow = row;
-      let newCol = col;
-      if (col === 0) {
-        if (row > 0) {
-          newRow = row - 1;
-          newCol = timelines[newRow].segments.length - 1;
+      // Adjust selection: prefer previous segment, else previous track's last segment
+      const sel = state.selectedSegment;
+      let newRow = sel.row;
+      let newCol = sel.col;
+      if (sel.row === row) {
+        if (sel.col >= timelines[row].segments.length) {
+          newCol = Math.max(0, timelines[row].segments.length - 1);
         }
-      } else {
-        newCol = col - 1;
       }
       return { ...state, timelines, selectedSegment: { row: newRow, col: newCol } };
     }
@@ -354,6 +357,13 @@ function compositionReducer(state: AppState, action: Action): AppState {
     case 'ANIMATE_GRAPH':
       return { ...state, revision: state.revision + 1 };
 
+    case 'UNDO':
+    case 'REDO':
+      return state; // Intercepted by dispatch wrapper — never reaches reducer in practice
+
+    case 'RESTORE_SNAPSHOT':
+      return { ...state, timelines: action.timelines, selectedSegment: action.selectedSegment, nextId: action.nextId };
+
     default:
       return state;
   }
@@ -366,12 +376,59 @@ const CompositionContext = createContext<{
   dispatch: Dispatch<Action>;
 } | null>(null);
 
+interface UndoSnapshot {
+  timelines: Timeline[];
+  selectedSegment: SelectedSegment;
+  nextId: number;
+}
+
+const UNDOABLE_ACTIONS: ReadonlySet<Action['type']> = new Set([
+  'DELETE_SEGMENT', 'ADD_SEGMENT', 'INSERT_SEGMENT',
+  'SEGMENT_REARRANGE', 'SEGMENT_MOVE_CROSS_TRACK',
+  'ADD_TRACK', 'DELETE_TRACK',
+  'LOAD_COMPOSITION',
+]);
+
+const MAX_UNDO = 50;
+
+function takeSnapshot(state: AppState): UndoSnapshot {
+  return { timelines: state.timelines, selectedSegment: state.selectedSegment, nextId: state.nextId };
+}
+
 export function CompositionProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(compositionReducer, {
+  const [state, rawDispatch] = useReducer(compositionReducer, {
     ...initialState,
     revision: 0,
     nextId: initialState.timelines.reduce((acc, tl) => acc + tl.segments.length, 0),
   });
+
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const undoStack = useRef<UndoSnapshot[]>([]);
+  const redoStack = useRef<UndoSnapshot[]>([]);
+
+  const dispatch: Dispatch<Action> = useCallback((action: Action) => {
+    if (action.type === 'UNDO') {
+      const prev = undoStack.current.pop();
+      if (!prev) return;
+      redoStack.current.push(takeSnapshot(stateRef.current));
+      rawDispatch({ type: 'RESTORE_SNAPSHOT', ...prev });
+      return;
+    }
+    if (action.type === 'REDO') {
+      const next = redoStack.current.pop();
+      if (!next) return;
+      undoStack.current.push(takeSnapshot(stateRef.current));
+      rawDispatch({ type: 'RESTORE_SNAPSHOT', ...next });
+      return;
+    }
+    if (UNDOABLE_ACTIONS.has(action.type)) {
+      undoStack.current.push(takeSnapshot(stateRef.current));
+      redoStack.current = [];
+      if (undoStack.current.length > MAX_UNDO) undoStack.current.shift();
+    }
+    rawDispatch(action);
+  }, [rawDispatch]);
 
   return (
     <CompositionContext.Provider value={{ state, dispatch }}>

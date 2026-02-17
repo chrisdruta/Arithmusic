@@ -21,9 +21,18 @@ export function TimelinePanel() {
   const { timelines, selectedSegment } = state;
 
   const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-
     const sourceDropId = result.source.droppableId;
+
+    if (!result.destination) {
+      // Template dropped nowhere — ignore
+      if (sourceDropId.startsWith('templates-')) return;
+      // Segment dragged outside all tracks — delete it
+      const sourceRow = Number(sourceDropId);
+      const sourceCol = result.source.index;
+      dispatch({ type: 'DELETE_SEGMENT', row: sourceRow, col: sourceCol });
+      return;
+    }
+
     const destDropId = result.destination.droppableId;
     const destCol = result.destination.index;
 

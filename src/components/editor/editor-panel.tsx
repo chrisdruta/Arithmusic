@@ -1,5 +1,3 @@
-import { Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -69,16 +67,6 @@ export default function EditorPanel() {
         error={!!expression.error}
         trackColor={trackColor}
       />
-      <div className="flex-1" />
-      <Button
-        variant="ghost-destructive"
-        size="icon"
-        className="shrink-0 self-end"
-        aria-label="Delete segment"
-        onClick={() => dispatch({ type: 'DELETE_SEGMENT' })}
-      >
-        <Trash2 className="size-5" />
-      </Button>
     </div>
   );
 }

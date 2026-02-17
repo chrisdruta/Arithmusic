@@ -248,8 +248,11 @@ Draggable segments styled as small calculator keys with inline bevel styles (not
 rounded-sm px-2 py-1.5 text-sm + inline bevel borders/shadow
 Selected: bg-secondary text-highlight border-b-2 border-b-highlight
 Default: bg-surface text-foreground border-b-2 border-b-transparent
-Dragging: glow-lcd
+Dragging (over track): glow-lcd
+Dragging (outside tracks — delete zone): border-destructive! bg-destructive/20! text-destructive! opacity-60
 ```
+
+See **Undo / Redo → Deletion UX** for full drag-to-delete and keyboard delete behavior.
 
 **Proportional width:** Chips use `flexGrow` proportional to `segment.length.value` (ms), with `flexShrink: 0, flexBasis: 0, minWidth: '3rem'`. Longer segments appear visually wider. When one track is shorter than the longest track, a trailing spacer div fills the remainder so all tracks share the same time scale. DnD `provided.draggableProps.style` must be spread **after** custom styles so drag positioning overrides during drag.
 
@@ -315,6 +318,42 @@ Custom segmented control styled as LCD sub-display. **Vertical orientation** in 
 | Domain toggle slide | `200ms` | `transform` with `cubic-bezier(0.4, 0, 0.2, 1)` |
 | Domain toggle text | `150ms` | `colors` |
 | Dialog | `200ms` | `fade + zoom (95%)` |
+
+---
+
+## Undo / Redo
+
+### Scope
+
+Undo/redo covers **structural composition changes** only — operations that alter the shape of the timeline. Text field edits (`TRACK_DATA_CHANGE`, `TRACK_OPTION_CHANGE`, `SETTINGS_CHANGE`) are excluded and rely on native browser undo (Ctrl+Z within inputs).
+
+**Undoable actions:** `DELETE_SEGMENT`, `ADD_SEGMENT`, `INSERT_SEGMENT`, `SEGMENT_REARRANGE`, `SEGMENT_MOVE_CROSS_TRACK`, `ADD_TRACK`, `DELETE_TRACK`, `LOAD_COMPOSITION`.
+
+### Keyboard shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Z` / `Cmd+Z` | Undo |
+| `Ctrl+Y` / `Ctrl+Shift+Z` / `Cmd+Shift+Z` | Redo |
+
+All shortcuts are **suppressed when focus is in `<input>`, `<textarea>`, or `contentEditable`** — this is the boundary that prevents conflation with text-level undo.
+
+### Snapshot
+
+Each undo entry captures `timelines`, `selectedSegment`, and `nextId`. UI-ephemeral state (`showingModals`, `compositionErrors`, `settings`, `revision`) is preserved as-is on restore — undoing won't close a dialog or revert settings.
+
+### Implementation
+
+Dispatch wrapper in `CompositionProvider` intercepts `UNDO`/`REDO` actions before they reach the reducer. Stacks stored in `useRef` (no re-renders on push/pop). Max depth: 50 entries (FIFO eviction). A new undoable action clears the redo stack.
+
+### Deletion UX
+
+Segment deletion has two input paths, both feeding the same `DELETE_SEGMENT` action (which is undoable):
+
+1. **Drag-to-delete:** Drag a segment chip outside all track droppables. Visual feedback: chip turns red/faded (`border-destructive! bg-destructive/20! text-destructive! opacity-60`) when `snapshot.draggingOver == null`. Deletion fires on drop.
+2. **Keyboard:** `Delete` / `Backspace` removes the selected segment. Suppressed when focus is in text fields.
+
+No confirmation dialog — undo via Ctrl+Z is the recovery path.
 
 ---
 

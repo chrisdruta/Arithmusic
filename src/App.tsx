@@ -46,6 +46,37 @@ function AppContent() {
       });
   }, []);
 
+  // Keyboard shortcuts (scoped: suppressed when focus is in text inputs)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      const inTextField = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable;
+      const mod = e.ctrlKey || e.metaKey;
+
+      // Undo: Ctrl+Z / Cmd+Z (not in text fields)
+      if (mod && e.key === 'z' && !e.shiftKey && !inTextField) {
+        e.preventDefault();
+        dispatch({ type: 'UNDO' });
+        return;
+      }
+      // Redo: Ctrl+Y / Cmd+Shift+Z / Ctrl+Shift+Z (not in text fields)
+      if (!inTextField && ((mod && e.key === 'y') || (mod && e.shiftKey && e.key === 'Z'))) {
+        e.preventDefault();
+        dispatch({ type: 'REDO' });
+        return;
+      }
+      // Delete selected segment: Delete / Backspace (not in text fields)
+      if ((e.key === 'Delete' || e.key === 'Backspace') && !inTextField) {
+        const { row, col } = state.selectedSegment;
+        if (!state.timelines[row]?.segments[col]) return;
+        e.preventDefault();
+        dispatch({ type: 'DELETE_SEGMENT', row, col });
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [state.selectedSegment, state.timelines, dispatch]);
+
   const stopPlaybackAnimation = useCallback(() => {
     if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);

@@ -51,7 +51,8 @@ export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
                       isSelected
                         ? "bg-secondary text-highlight border-b-2 border-b-highlight [text-shadow:0_0_8px_rgba(51,255,102,0.4)]"
                         : "bg-surface text-foreground border-b-2 border-b-transparent hover:bg-secondary/80 hover:text-highlight/80",
-                      snapshot.isDragging && "glow-lcd"
+                      snapshot.isDragging && snapshot.draggingOver != null && "glow-lcd",
+                      snapshot.isDragging && snapshot.draggingOver == null && "border-destructive! bg-destructive/20! text-destructive! opacity-60"
                     )}
                   >
                     {segment.title.value}
