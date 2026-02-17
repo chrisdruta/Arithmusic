@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { Minus, VolumeX } from 'lucide-react';
 import { mdiSineWave, mdiTriangleWave, mdiSawtoothWave } from '@mdi/js';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,66 @@ function MdiIcon({ path }: { path: string }) {
     <svg viewBox="0 0 24 24" className="size-5 fill-current">
       <path d={path} />
     </svg>
+  );
+}
+
+const waves = [
+  { value: 'sine', path: mdiSineWave, label: 'Sine wave' },
+  { value: 'triangle', path: mdiTriangleWave, label: 'Triangle wave' },
+  { value: 'saw', path: mdiSawtoothWave, label: 'Sawtooth wave' },
+] as const;
+
+function WaveSelect({ rowIndex }: { rowIndex: number }) {
+  const { state, dispatch } = useComposition();
+  const wave = state.timelines[rowIndex].options.wave;
+  const [expanded, setExpanded] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [expanded]);
+
+  const selected = waves.find((w) => w.value === wave) || waves[0];
+
+  if (!expanded) {
+    return (
+      <Button
+        variant="calc-secondary"
+        size="sm"
+        onClick={() => setExpanded(true)}
+        className="text-highlight"
+        aria-label={`Wave: ${selected.label}. Click to change.`}
+      >
+        <MdiIcon path={selected.path} />
+      </Button>
+    );
+  }
+
+  return (
+    <div ref={ref}>
+      <ToggleGroup
+        type="single"
+        size="sm"
+        value={wave}
+        onValueChange={(val) => {
+          if (val) dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'wave', value: val });
+          setExpanded(false);
+        }}
+      >
+        {waves.map((w) => (
+          <ToggleGroupItem key={w.value} value={w.value} aria-label={w.label} variant="calc">
+            <MdiIcon path={w.path} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
   );
 }
 
@@ -33,24 +94,7 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
         size="sm"
         className="w-32 bg-muted"
       />
-      <ToggleGroup
-        type="single"
-        size="sm"
-        value={options.wave}
-        onValueChange={(val) => {
-          if (val) dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'wave', value: val });
-        }}
-      >
-        <ToggleGroupItem value="sine" aria-label="Sine wave" variant="calc">
-          <MdiIcon path={mdiSineWave} />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="triangle" aria-label="Triangle wave" variant="calc">
-          <MdiIcon path={mdiTriangleWave} />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="saw" aria-label="Sawtooth wave" variant="calc">
-          <MdiIcon path={mdiSawtoothWave} />
-        </ToggleGroupItem>
-      </ToggleGroup>
+      <WaveSelect rowIndex={rowIndex} />
       <Toggle
         size="sm"
         pressed={options.mute}

@@ -106,12 +106,10 @@ export function SegmentPanel() {
   return (
     <div className="flex w-80 shrink-0 flex-col overflow-hidden border-l border-border/50 bg-surface">
       <div className="groove-bottom flex items-center gap-2 bg-surface-alt px-3 py-1.5">
-        {trackColor && (
-          <span
-            className="inline-block size-1.5 rounded-full"
-            style={{ backgroundColor: `var(--color-${trackColor})` }}
-          />
-        )}
+        <Led
+          color={trackColor ? `var(--color-${trackColor})` : 'var(--color-muted-foreground)'}
+          on={!!trackColor}
+        />
         <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
           Segment Editor
         </span>

@@ -20,10 +20,6 @@ export default function EditorPanel() {
 
   return (
     <div className="relative flex h-full flex-col gap-4 overflow-y-auto bg-surface px-4 py-5 text-foreground">
-      <div
-        className="absolute inset-x-0 top-0 h-1"
-        style={{ backgroundColor: `var(--color-${trackColor})` }}
-      />
       <FormField
         label="Title"
         value={title.value}

@@ -4,22 +4,12 @@ import { useComposition } from '../../context/CompositionContext';
 import TemplateDropdowns from './template-bar';
 
 export default function EditorControls() {
-  const { state, dispatch } = useComposition();
-  const { timelines } = state;
+  const { dispatch } = useComposition();
 
   return (
     <div className="groove-bottom flex w-full items-center gap-2 bg-surface-alt px-2.5 py-2.5">
       <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
         Timeline
-      </span>
-      <span className="flex items-center gap-1">
-        {timelines.map((_, i) => (
-          <span
-            key={i}
-            className="inline-block size-1.5 rounded-full"
-            style={{ backgroundColor: `var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][i % 4]})` }}
-          />
-        ))}
       </span>
       <div className="mx-1 self-stretch border-r border-border/40" />
       <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
