@@ -9,7 +9,7 @@ export default function EditorControls() {
 
   return (
     <div className="groove-bottom flex w-full items-center gap-2 bg-surface-alt px-2.5 py-2.5">
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+      <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
         Timeline
       </span>
       <span className="flex items-center gap-1">

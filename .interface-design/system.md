@@ -22,15 +22,15 @@ The UI scales proportionally across display resolutions via a responsive root fo
 
 ```css
 html {
-  font-size: clamp(18px, 0.75vw, 24px);
+  font-size: clamp(16px, 0.75vw, 22px);
 }
 ```
 
 | Resolution | Viewport width | Root font-size | Scale |
 |------------|---------------|----------------|-------|
-| 1080p | 1920px | 18px | 1× (base) |
-| 1440p | 2560px | 19.2px | 1.07× |
-| 4K | 3840px | 24px | 1.33× (cap) |
+| 1080p | 1920px | 16px | 1× (base) |
+| 1440p | 2560px | 19.2px | 1.2× |
+| 4K | 3840px | 22px | 1.375× (cap) |
 
 **Principle:** Use standard Tailwind classes (`text-xs`, `text-sm`, `text-base`, etc.) which are rem-based. Avoid hardcoded `text-[Npx]` values — they bypass the scaling system. The only px values should be decorative (borders, border-radius tokens, scanline patterns).
 
@@ -58,7 +58,7 @@ LCD slider thumb and track sizes use rem units in `index.css` so they scale with
 ### LCD Screen
 | Token | Hex | Role |
 |-------|-----|------|
-| `lcd-bg` | `#0a1a0a` | Graph background, segment editor panel bg |
+| `lcd-bg` | `#0a1a0a` | Graph background, LCD input fields, output display |
 | `lcd-green` / `highlight` | `#33ff66` | Primary LCD phosphor — traces, selected states, active text |
 | `lcd-grid` | `#0d2e0d` | Graph gridlines, slider tracks |
 | `lcd-dim` | `#1a6633` | Muted LCD text (slider labels, domain toggle inactive) |
@@ -81,7 +81,7 @@ LCD slider thumb and track sizes use rem units in `index.css` so they scale with
 
 Unselected tracks render at `0.3` opacity. Selected track renders at full opacity, `strokeWidth: 2`.
 
-Track colors appear in three places: graph traces, timeline accent strips (`w-1` / `w-1.5` for selected), and panel header dots.
+Track colors appear in four places: graph traces, timeline LED indicators, segment editor accent strip, and panel header dots.
 
 ---
 
@@ -94,12 +94,12 @@ Track colors appear in three places: graph traces, timeline accent strips (`w-1`
 | **Bezel model name** | `VT323` (`font-display`) | `text-lg` | bold | `tracking-tight` | `text-foreground` |
 | **Bezel tagline** | `VT323` (`font-display`) | `text-base` | normal | `tracking-widest` | `uppercase text-highlight/40` with phosphor text-shadow |
 | **Labels** | `Share Tech Mono` | `text-sm` | normal | `tracking-wider` | `uppercase text-muted-foreground` |
-| **Panel headers** | `Share Tech Mono` | `text-xs` | `font-semibold` | `tracking-widest` | `uppercase text-muted-foreground` |
+| **Panel headers** | `Share Tech Mono` | `text-sm` | `font-semibold` | `tracking-widest` | `uppercase text-muted-foreground` |
 | **Control column labels** | `Share Tech Mono` | `text-xs` | normal | `tracking-widest` | `uppercase text-muted-foreground` (e.g. "Domain", "Settings") |
 | **Slider captions** | `VT323` (`font-display`) | `text-xs` | normal | `tracking-wide` | `italic text-lcd-dim` |
 | **Code/data** | `font-mono` | `text-xs` | normal | default | Template expressions, JSON |
 | **Buttons** | `TI92PlusPC` (`font-button`) | `text-sm` | `font-medium` | default | TI-92 Plus PC Unicode font. Local file at `/fonts/Ti92Pluspc-unicode.ttf`. Applied to `Button` and `Toggle` base classes. Falls back to Share Tech Mono → monospace |
-| **KaTeX output** | `TICELarge` | `\Large` (KaTeX) | normal | default | TI calculator LCD font. Local file at `/fonts/TICELarge.ttf`. Overrides all KaTeX internal fonts via `.lcd-katex .katex .katex-html *` |
+| **KaTeX output** | `TICELarge` | `\normalsize` (KaTeX) | normal | default | TI calculator LCD font. Local file at `/fonts/TICELarge.ttf`. Overrides all KaTeX internal fonts via `.lcd-katex .katex .katex-html *` |
 
 Body and labels remain monospace (Share Tech Mono). Buttons use the TI-92 Plus PC font — the actual typeface from the calculator's key labels. KaTeX math output uses TICELarge, the TI calculator LCD pixel font for the screen metaphor.
 
@@ -137,12 +137,12 @@ The app uses a **border + bevel** system, not box-shadows for elevation. Shadows
    active: shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] translate-y-px
    ```
 
-2. **LCD inset (small)** — recessed screen effect for small LCD elements (domain toggle, settings about panel):
+2. **LCD inset (small)** — recessed screen effect for small LCD elements (domain toggle, settings about panel, Input `surface="lcd"` variant, editor output display):
    ```
    shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]
    ```
 
-3. **LCD inset (deep)** — recessed screen effect for large LCD surfaces (graph, segment editor panel, editor empty state). Heavier depth + subtle green phosphor bleed:
+3. **LCD inset (deep)** — recessed screen effect for large LCD surfaces (graph). Heavier depth + subtle green phosphor bleed:
    ```
    shadow-[inset_0_2px_6px_rgba(0,0,0,0.6),inset_0_0_1px_rgba(0,0,0,0.8),0_0_8px_rgba(51,255,102,0.06)]
    ```
@@ -168,7 +168,7 @@ The app uses a **border + bevel** system, not box-shadows for elevation. Shadows
    ```
 
 ### Surface stacking (bottom to top)
-`shell-bg` (desk) → `background` (calculator body) → `surface-alt/50` (top bezel) → `surface` (panels) → `surface-alt` (headers) → `lcd-bg` (recessed into surface)
+`shell-bg` (desk) → `background` (calculator body) → `surface-alt/50` (top bezel) → `surface` (panels, editor panel) → `surface-alt` (headers) → `lcd-bg` (recessed into surface — graph, individual input fields, output display)
 
 ---
 
@@ -203,7 +203,7 @@ Beveled 3D button styles are proper `cva` variants in `button.tsx`, not CSS util
 Sizes: `size="icon"` for control column and toolbar buttons, `size="sm"` for editor controls bar and modals.
 
 ### Inputs
-Input has cva `size` variants (like Button):
+Input has cva `size` and `surface` variants:
 
 | Size | Height | Text | Usage |
 |------|--------|------|-------|
@@ -211,20 +211,25 @@ Input has cva `size` variants (like Button):
 | `sm` | `h-8` | `text-sm` | Track options (compact rows) |
 | `lg` | `h-11` | `text-base` | Segment editor panel, form fields, equations |
 
+| Surface | Style | Usage |
+|---------|-------|-------|
+| `default` | `bg-transparent` | Inputs on LCD or dark surfaces |
+| `lcd` | `bg-lcd-bg border-border` + LCD inset (small) shadow | Segment editor fields — individual recessed LCD screens |
+
 - Error state: `border-destructive` via `className`
 - Paired with `<Label>` using `htmlFor`/`id` association
 - Native `size` attribute is omitted from props to avoid conflict with the variant
 
 ### Form Fields
-Reusable `<FormField>` wraps `Label` + `Input` + error message. Defaults to `size="lg"`:
+Reusable `<FormField>` wraps `Label` + `Input` + error message. Defaults to `size="lg"`. Passes through `surface` prop:
 ```
-<FormField label="Title" value={...} error={...} onChange={...} />
+<FormField label="Title" value={...} error={...} surface="lcd" onChange={...} />
 ```
 Renders:
 ```
 <div className="flex flex-col gap-2">
   <Label htmlFor={id} className="text-sm text-muted-foreground uppercase tracking-wider">
-  <Input id={id} size="lg" />
+  <Input id={id} size="lg" surface="lcd" />
   {error && <p className="text-sm text-destructive">}
 </div>
 ```
@@ -254,10 +259,10 @@ groove-bottom flex items-center gap-2 bg-surface-alt px-3 py-1.5
 - **Segment Editor** header includes a track color dot (`size-1.5 rounded-full`) when a segment is selected — creates a visual thread between the timeline and the editor.
 - **Timeline** label is merged inline into the EditorControls bar, followed by track color dots showing active tracks.
 
-### Track Color Accent Strips
-Thin colored bars that identify which track a panel or row belongs to:
-- **Segment editor**: `h-1.5` absolute strip at top of LCD panel, colored by track
-- **Timeline rows**: `w-1` strip (or `w-1.5` when that track is selected) at left edge of each row
+### Track Color Indicators
+Colored elements that identify which track a panel or row belongs to:
+- **Segment editor**: `h-1` absolute strip at top of panel, colored by track
+- **Timeline LED indicators**: `<Led>` component (`components/ui/led.tsx`). Props: `color` (CSS color string), `on` (boolean). Renders a `size-2 rounded-[1px]` square. On: full opacity + `box-shadow: 0 0 6px` colored glow. Off: `opacity-20`, no glow. Centered inside a `w-6` container in the timeline row.
 - **Panel header dots**: `size-1.5 rounded-full` inline dots colored per track
 
 ### Dialogs (modals)
@@ -335,8 +340,8 @@ TI-92-inspired landscape layout. The entire app is a single calculator body sitt
 │  │  │  [⚙]   │└───────────────────────────┘└─────────────────┘  │ │
 │  │  └─────────┘─────────── border-t ──────────────────────────── │ │
 │  │  │ Timeline ●●● │ Track+ │ Notes▾ … │ Load │ Save           │ │
-│  │  │ ▌ track rows with drag-and-drop segment chips              │ │
-│  │  │ ▌ ...                                                      │ │
+│  │  │ ■ track rows with drag-and-drop segment chips              │ │
+│  │  │ □ ...                   (■ = LED on, □ = LED off)          │ │
 │  └──└────────────────────────────────────────────────────────────┘ │
 │                                                                    │
 └────────────────────────────────────────────────────────────────────┘
@@ -369,8 +374,16 @@ Vertical function key strip (`bg-gradient-to-b from-surface-alt to-surface`). Gr
 
 ### Segment editor panel (right)
 Wrapped in `SegmentPanel` which provides the header and empty state. Separated from graph by `border-l border-border/50`. Two states:
-- **Selected**: `EditorPanel` — vertical `flex-col gap-4` layout inside LCD panel (`lcd-scanlines border-[3px] border-border bg-lcd-bg`). Fields stack: Title → Equation → Length → Volume → divider → Output → delete button. Track color accent strip (`h-1.5`) at top.
-- **Empty**: LCD placeholder with "SELECT A SEGMENT TO EDIT" centered.
+- **Selected**: `EditorPanel` — vertical `flex-col gap-4` layout on `bg-surface`. Individual input fields use `surface="lcd"` for recessed LCD styling. Output display has its own LCD container. Fields stack: Title → Equation → Length → Volume → divider → Output → delete button. Track color accent strip (`h-1`) at top.
+- **Empty**: Surface placeholder (`bg-surface`) with "SELECT A SEGMENT TO EDIT" centered in `text-muted-foreground/40`.
+
+### Editor Output Display
+KaTeX math output wrapped in an LCD-recessed container:
+```
+rounded-sm border border-border bg-lcd-bg px-3 py-2
+shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]
+```
+Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a consistent "embedded screen" look across all data display elements in the editor.
 
 ### Timeline (bottom)
 `TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `border-t border-border/50`. The "Timeline" label and track color dots are merged into the `EditorControls` bar — no separate header row.
@@ -397,7 +410,7 @@ Wrapped in `SegmentPanel` which provides the header and empty state. Separated f
 
 1. **Body text is monospace.** Buttons use TI-92 Plus PC font (the actual calculator key typeface). KaTeX output uses TICELarge (TI calculator LCD font). Everything else is Share Tech Mono or VT323.
 2. **Buttons get beveled.** Any clickable rectangle uses a `calc` / `calc-secondary` / `calc-accent` variant unless it's a ghost/link. Bevel styles live in component cva variants, never in CSS utilities.
-3. **LCD surfaces are recessed.** Graph and segment editor panel use `lcd-bg` with scanline overlays.
+3. **LCD surfaces are recessed.** Graph uses `lcd-bg` with scanline overlays. Segment editor uses `bg-surface` with individual `surface="lcd"` inputs and an LCD output container.
 4. **Shell surfaces stack by brightness.** `background` < `surface` < `surface-alt`.
 5. **Green means active/selected.** `highlight` (`#33ff66`) is the primary signal color within LCD contexts.
 6. **Shadows serve physics, not aesthetics.** Bevel = raised plastic. Inset = recessed screen. Glow = phosphor bleed. Body frame = device on desk.
@@ -406,5 +419,5 @@ Wrapped in `SegmentPanel` which provides the header and empty state. Separated f
 9. **Transitions are fast.** 75ms for direct interaction, 150-200ms for position/transform.
 10. **No dark mode toggle.** The app is permanently dark — it's a calculator, not a website.
 11. **One physical object.** Zones are flush — no gaps between sections. Borders (`border-r`, `border-l`, `border-t`, `border-border/50`) handle visual separation. Each zone reads as a molded section of the calculator body, not a floating card.
-12. **Track colors thread through.** The same track color (green/amber/blue/red) appears on graph traces, timeline accent strips, segment editor accent strip, and panel header dots — creating a visual connection across zones.
+12. **Track colors thread through.** The same track color (green/amber/blue/red) appears on graph traces, timeline LED indicators, segment editor accent strip, and panel header dots — creating a visual connection across zones.
 13. **Sizes scale with viewport.** Use rem-based values (standard Tailwind classes). The responsive root font-size handles display adaptation automatically. No hardcoded px for text, spacing, or interactive element sizes.

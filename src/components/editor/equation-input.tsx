@@ -74,6 +74,7 @@ export default function EquationInput({ value, error, onChange }: {
           onChange={onChange}
           onScroll={syncScroll}
           size="lg"
+          surface="lcd"
           className={cn(
             "text-transparent caret-highlight",
             error && "border-destructive"

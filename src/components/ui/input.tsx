@@ -12,9 +12,14 @@ const inputVariants = cva(
         sm: "h-8 text-sm",
         lg: "h-11 text-base",
       },
+      surface: {
+        default: "",
+        lcd: "bg-lcd-bg border-border shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]",
+      },
     },
     defaultVariants: {
       size: "default",
+      surface: "default",
     },
   }
 )
@@ -23,13 +28,14 @@ function Input({
   className,
   type,
   size,
+  surface,
   ...props
 }: Omit<React.ComponentProps<"input">, "size"> & VariantProps<typeof inputVariants>) {
   return (
     <input
       type={type}
       data-slot="input"
-      className={cn(inputVariants({ size, className }))}
+      className={cn(inputVariants({ size, surface, className }))}
       {...props}
     />
   )

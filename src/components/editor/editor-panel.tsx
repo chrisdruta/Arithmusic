@@ -19,15 +19,16 @@ export default function EditorPanel() {
   const trackColor = ['lcd-green', 'amber', 'func-blue', 'accent'][row % 4];
 
   return (
-    <div className="lcd-scanlines relative flex h-full flex-col gap-4 overflow-y-auto border-[3px] border-border bg-lcd-bg px-4 py-5 text-foreground shadow-[inset_0_2px_6px_rgba(0,0,0,0.6),inset_0_0_1px_rgba(0,0,0,0.8),0_0_8px_rgba(51,255,102,0.06)]">
+    <div className="relative flex h-full flex-col gap-4 overflow-y-auto bg-surface px-4 py-5 text-foreground">
       <div
-        className="absolute inset-x-0 top-0 h-1.5"
+        className="absolute inset-x-0 top-0 h-1"
         style={{ backgroundColor: `var(--color-${trackColor})` }}
       />
       <FormField
         label="Title"
         value={title.value}
         error={title.error}
+        surface="lcd"
         onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'title', value: e.target.value })}
       />
       <EquationInput
@@ -49,6 +50,7 @@ export default function EditorPanel() {
           value={volume.value}
           onChange={(e) => dispatch({ type: 'TRACK_DATA_CHANGE', col, row, field: 'volume', value: e.target.value })}
           size="lg"
+          surface="lcd"
           className={cn(volume.error && "border-destructive")}
           aria-invalid={!!volume.error}
         />
@@ -69,6 +71,7 @@ export default function EditorPanel() {
       <EditorOutput
         output={expression.error ? expression.error : expression.value}
         error={!!expression.error}
+        trackColor={trackColor}
       />
       <div className="flex-1" />
       <Button

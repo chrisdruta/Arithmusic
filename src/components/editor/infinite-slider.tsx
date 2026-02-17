@@ -51,6 +51,7 @@ export default function InfiniteSlider({ valueMs, error, onChange }: {
           else onChange(e.target.value);
         }}
         size="lg"
+        surface="lcd"
         className={cn(error && "border-destructive")}
         aria-invalid={!!error}
       />

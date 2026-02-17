@@ -9,7 +9,7 @@ type FormFieldProps = Omit<React.ComponentProps<"input">, "size"> & VariantProps
   wrapperClassName?: string;
 }
 
-export function FormField({ label, error, wrapperClassName, className, id, size = "lg", ...props }: FormFieldProps) {
+export function FormField({ label, error, wrapperClassName, className, id, size = "lg", surface, ...props }: FormFieldProps) {
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div className={cn("flex flex-col gap-2", wrapperClassName)}>
@@ -19,6 +19,7 @@ export function FormField({ label, error, wrapperClassName, className, id, size 
       <Input
         id={fieldId}
         size={size}
+        surface={surface}
         className={cn(error && "border-destructive", className)}
         aria-invalid={!!error}
         {...props}

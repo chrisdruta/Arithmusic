@@ -5,6 +5,7 @@ import EditorControls from './editor/editor-controls';
 import EditorPanel from './editor/editor-panel';
 import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
+import { Led } from './ui/led';
 import { getTemplateById } from '../lib/templates';
 import type { Segment } from '../types';
 
@@ -78,10 +79,12 @@ export function TimelinePanel() {
         <div className="flex-1 overflow-y-auto pb-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)]">
           {timelines.map((_tl, rowIndex) => (
             <div key={rowIndex} className="mt-px flex w-full justify-start border-b border-border/50 bg-surface">
-              <div
-                className={`shrink-0 self-stretch ${selectedSegment.row === rowIndex ? 'w-1.5' : 'w-1'}`}
-                style={{ backgroundColor: `var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})` }}
-              />
+              <div className="flex w-6 shrink-0 items-center justify-center">
+                <Led
+                  color={`var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})`}
+                  on={selectedSegment.row === rowIndex}
+                />
+              </div>
               <TrackOptions rowIndex={rowIndex} />
               <TrackTimeline rowIndex={rowIndex} />
             </div>
@@ -109,7 +112,7 @@ export function SegmentPanel() {
             style={{ backgroundColor: `var(--color-${trackColor})` }}
           />
         )}
-        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
           Segment Editor
         </span>
       </div>
@@ -117,8 +120,8 @@ export function SegmentPanel() {
         {selectedSegmentData ? (
           <EditorPanel />
         ) : (
-          <div className="lcd-scanlines relative flex h-full items-center justify-center border-[3px] border-t-0 border-border bg-lcd-bg shadow-[inset_0_2px_6px_rgba(0,0,0,0.6),inset_0_0_1px_rgba(0,0,0,0.8),0_0_8px_rgba(51,255,102,0.06)]">
-            <span className="font-display text-center text-sm tracking-widest text-lcd-dim/60">
+          <div className="flex h-full items-center justify-center bg-surface">
+            <span className="font-display text-center text-sm tracking-widest text-muted-foreground/40">
               SELECT A SEGMENT TO EDIT
             </span>
           </div>
