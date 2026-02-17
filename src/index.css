@@ -86,6 +86,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Dark-themed scrollbars — blend into the calculator shell */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
+}
+
 /* --- Composable utilities via @layer --- */
 
 @layer utilities {

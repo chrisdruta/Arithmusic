@@ -81,7 +81,7 @@ LCD slider thumb and track sizes use rem units in `index.css` so they scale with
 
 Unselected tracks render at `0.3` opacity. Selected track renders at full opacity, `strokeWidth: 2`.
 
-Track colors appear in five places: graph traces, graph legend, timeline LED indicators, segment editor accent strip, and panel header dots.
+Track colors appear in four places: graph traces, graph legend, timeline LED indicators, and panel header dots.
 
 ---
 
@@ -275,11 +275,10 @@ groove-bottom flex items-center gap-2 bg-surface-alt px-3 py-1.5
 <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
 ```
 - **Segment Editor** header includes a track color dot (`size-1.5 rounded-full`) when a segment is selected — creates a visual thread between the timeline and the editor.
-- **Timeline** label is merged inline into the EditorControls bar, followed by track color dots showing active tracks.
+- **Timeline** label is merged inline into the EditorControls bar.
 
 ### Track Color Indicators
 Colored elements that identify which track a panel or row belongs to:
-- **Segment editor**: `h-1` absolute strip at top of panel, colored by track
 - **Timeline LED indicators**: `<Led>` component (`components/ui/led.tsx`). Props: `color` (CSS color string), `on` (boolean). Renders a `size-2 rounded-[1px]` square. On: full opacity + `box-shadow: 0 0 6px` colored glow. Off: `opacity-20`, no glow. Centered inside a `w-6` container in the timeline row.
 - **Panel header dots**: `size-1.5 rounded-full` inline dots colored per track
 
@@ -404,10 +403,10 @@ TI-92-inspired landscape layout. The entire app is a single calculator body sitt
 │  │▓│ │ [BEAT]  ││                           ││ Volume slider   │  │▓│ │
 │  │▓│ │         ││                           ││─────────────────│  │▓│ │
 │  │▓│ │─────────││                           ││ Output (KaTeX)  │  │▓│ │
-│  │▓│ │SETTINGS ││                           ││            [🗑] │  │▓│ │
+│  │▓│ │SETTINGS ││                           ││                 │  │▓│ │
 │  │▓│ │  [⚙]   │└───────────────────────────┘└─────────────────┘  │▓│ │
 │  │▓│ └─────────┘─────────── border-t ──────────────────────────── │▓│ │
-│  │▓│ │ Timeline ●●● │ Track+ │ Notes▾ … │ Load │ Save           │▓│ │
+│  │▓│ │ Timeline │ Track+ │ Notes▾ … │ Load │ Save               │▓│ │
 │  │▓│ │ ■ track rows with drag-and-drop segment chips              │▓│ │
 │  │▓│ │ □ ...                   (■ = LED on, □ = LED off)          │▓│ │
 │  │▓└─└────────────────────────────────────────────────────────────┘▓│ │
@@ -445,7 +444,7 @@ Vertical function key strip (`bg-gradient-to-b from-surface-alt to-surface`). Gr
 
 ### Segment editor panel (right)
 Wrapped in `SegmentPanel` which provides the header and empty state. Uses `bg-gradient-to-b from-surface-alt to-surface` (matching the left control column for depth symmetry). Separated from graph by `border-l border-border/50`. Two states:
-- **Selected**: `EditorPanel` — vertical `flex-col gap-4` layout. Individual input fields use `surface="lcd"` for recessed LCD styling. Output display has its own LCD container. Fields stack: Title → Equation → Length → Volume → divider → Output → delete button. Track color accent strip (`h-1`) at top.
+- **Selected**: `EditorPanel` — vertical `flex-col gap-4` layout. Individual input fields use `surface="lcd"` for recessed LCD styling. Output display has its own LCD container. Fields stack: Title → Equation → Length → Volume → divider → Output.
 - **Empty**: Gradient placeholder with "SELECT A SEGMENT TO EDIT" centered in `text-muted-foreground/40`.
 
 ### Editor Output Display
@@ -457,7 +456,7 @@ shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]
 Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a consistent "embedded screen" look across all data display elements in the editor.
 
 ### Timeline (bottom)
-`TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `groove border-t border-border/50` (plastic mold seam + border). The "Timeline" label and track color dots are merged into the `EditorControls` bar — no separate header row.
+`TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `groove border-t border-border/50` (plastic mold seam + border). The "Timeline" label is merged into the `EditorControls` bar — no separate header row.
 
 ---
 
@@ -467,7 +466,7 @@ Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a con
 - **No raw `<button>` elements.** Always use the `<Button>` component with the appropriate variant.
 - **Component-specific styles in components.** The `@layer utilities` in `index.css` is reserved for genuinely generic utilities (`glow-lcd`) and pseudo-element effects that Tailwind can't express. Button/toggle bevel styles live in their respective cva definitions.
 - **`className` is for one-off tweaks only.** Acceptable: `className="self-center"` (layout), `className="w-32"` (width). Not acceptable: overriding colors or interactive states that should be a variant.
-- **Custom CSS lives in `index.css` only when Tailwind can't express it:** vendor-prefixed sliders (rem-based), pseudo-element overlays (`::after`), third-party class overrides (`.katex`).
+- **Custom CSS lives in `index.css` only when Tailwind can't express it:** vendor-prefixed sliders (rem-based), pseudo-element overlays (`::after`), third-party class overrides (`.katex`), scrollbar styling.
 - **Strip all `dark:` classes from new components.** The app is permanently dark-themed (rule #10). When adding components via `bunx shadcn@latest add`, remove all `dark:` prefixed classes — they're dead code here.
 - **Replace `rounded-md` with `rounded-sm`** in any newly added shadcn component. Official defaults use `rounded-md`; our calculator aesthetic uses `rounded-sm` (2px) everywhere.
 - **No `"use client"` directives.** This is a Vite project, not Next.js. Strip `"use client"` from all components for consistency.

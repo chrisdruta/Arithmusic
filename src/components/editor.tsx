@@ -88,8 +88,9 @@ export function TimelinePanel() {
         <div className="flex-1 overflow-y-auto pb-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)]">
           {timelines.map((_tl, rowIndex) => (
             <div key={rowIndex} className="mt-px flex w-full justify-start border-b border-border/50 bg-surface">
-              <div className="flex w-6 shrink-0 items-center justify-center">
+              <div className="flex w-8 shrink-0 items-center justify-center">
                 <Led
+                  className="size-3"
                   color={`var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})`}
                   on={selectedSegment.row === rowIndex}
                 />
@@ -127,7 +128,7 @@ export function SegmentPanel() {
         {selectedSegmentData ? (
           <EditorPanel />
         ) : (
-          <div className="flex h-full items-center justify-center bg-surface">
+          <div className="flex h-full items-center justify-center">
             <span className="font-display text-center text-sm tracking-widest text-muted-foreground/40">
               SELECT A SEGMENT TO EDIT
             </span>
