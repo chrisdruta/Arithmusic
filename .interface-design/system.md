@@ -98,8 +98,10 @@ Track colors appear in three places: graph traces, timeline accent strips (`w-1`
 | **Control column labels** | `Share Tech Mono` | `text-xs` | normal | `tracking-widest` | `uppercase text-muted-foreground` (e.g. "Domain", "Settings") |
 | **Slider captions** | `VT323` (`font-display`) | `text-xs` | normal | `tracking-wide` | `italic text-lcd-dim` |
 | **Code/data** | `font-mono` | `text-xs` | normal | default | Template expressions, JSON |
+| **Buttons** | `TI92PlusPC` (`font-button`) | `text-sm` | `font-medium` | default | TI-92 Plus PC Unicode font. Local file at `/fonts/Ti92Pluspc-unicode.ttf`. Applied to `Button` and `Toggle` base classes. Falls back to Share Tech Mono → monospace |
+| **KaTeX output** | `TICELarge` | `\Large` (KaTeX) | normal | default | TI calculator LCD font. Local file at `/fonts/TICELarge.ttf`. Overrides all KaTeX internal fonts via `.lcd-katex .katex .katex-html *` |
 
-All fonts are monospace. No sans-serif anywhere.
+Body and labels remain monospace (Share Tech Mono). Buttons use the TI-92 Plus PC font — the actual typeface from the calculator's key labels. KaTeX math output uses TICELarge, the TI calculator LCD pixel font for the screen metaphor.
 
 ---
 
@@ -393,7 +395,7 @@ Wrapped in `SegmentPanel` which provides the header and empty state. Separated f
 
 ## Rules
 
-1. **Everything is monospace.** No sans-serif fonts.
+1. **Body text is monospace.** Buttons use TI-92 Plus PC font (the actual calculator key typeface). KaTeX output uses TICELarge (TI calculator LCD font). Everything else is Share Tech Mono or VT323.
 2. **Buttons get beveled.** Any clickable rectangle uses a `calc` / `calc-secondary` / `calc-accent` variant unless it's a ghost/link. Bevel styles live in component cva variants, never in CSS utilities.
 3. **LCD surfaces are recessed.** Graph and segment editor panel use `lcd-bg` with scanline overlays.
 4. **Shell surfaces stack by brightness.** `background` < `surface` < `surface-alt`.

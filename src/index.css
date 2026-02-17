@@ -3,6 +3,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* TI calculator LCD font for KaTeX math output */
+@font-face {
+  font-family: "TICELarge";
+  src: url("/fonts/TICELarge.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* TI-92 Plus PC font for buttons */
+@font-face {
+  font-family: "TI92PlusPC";
+  src: url("/fonts/Ti92Pluspc-unicode.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   /* Casio fx-6300G retro calculator palette */
   --color-shell-bg: #0a0a0a;
@@ -47,6 +65,7 @@
   /* Monospace calculator fonts */
   --font-sans: "Share Tech Mono", "Courier New", monospace;
   --font-display: "VT323", "Share Tech Mono", monospace;
+  --font-button: "TI92PlusPC", "Share Tech Mono", monospace;
 }
 
 html {
@@ -133,9 +152,12 @@ body {
     );
 }
 
-/* KaTeX third-party class override */
+/* KaTeX third-party class override — TI calculator LCD font */
 .lcd-katex .katex {
   color: var(--color-lcd-green);
+}
+.lcd-katex .katex .katex-html * {
+  font-family: "TICELarge", monospace !important;
 }
 
 /* --- Vendor-prefixed slider (no Tailwind support) --- */
