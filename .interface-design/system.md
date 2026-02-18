@@ -311,6 +311,30 @@ Content uses `font-mono text-xs` with section headers in `uppercase tracking-wid
 ### Hint Text
 Contextual hints below labels use the same style as slider captions: `font-display text-xs italic text-lcd-dim tracking-wide`. Used for `x = time (s)` below the equation label, `Infini-Slide` below the length slider. Provides context without cluttering the label itself.
 
+### Timeline Ruler
+Thin time-scale strip rendered above track rows inside the scrollable track list. Provides visual reference for segment durations.
+
+**Alignment:** Left offset measured via `ResizeObserver` on the first track row's LED + TrackOptions wrapper (`controlsRef`). The ruler's tick area starts at the same horizontal position as the segment chips. `px-3` padding on the tick container roughly matches TrackTimeline's `p-2` + first chip's `ml-1`.
+
+**Tick intervals:** Adaptive based on total composition duration (`maxTotalMs`). `getTickConfig()` returns `{ major, minor }` intervals:
+| Total duration | Major | Minor |
+|---------------|-------|-------|
+| ≤ 500ms | 100ms | 50ms |
+| ≤ 1.5s | 500ms | 250ms |
+| ≤ 3s | 500ms | 250ms |
+| ≤ 6s | 1s | 500ms |
+| ≤ 15s | 2s | 1s |
+| ≤ 30s | 5s | 2.5s |
+| ≤ 60s | 10s | 5s |
+| > 60s | 30s | 10s |
+
+**Major ticks:** Labeled + taller line (`h-1.5 bg-muted-foreground/30`). Labels in `text-xs text-muted-foreground/40`. Format: `0s`, `0.5s`, `1s`, etc.
+**Minor ticks:** Unlabeled shorter line (`h-1 bg-muted-foreground/15`).
+
+**Positioning:** Absolute within a `relative h-6 flex-1 overflow-hidden` container. Each tick at `left: (time / maxTotalMs * 100)%`. Edge handling: first tick left-aligned (no translate), last tick right-aligned (`-translate-x-full`), middle ticks centered (`-translate-x-1/2`).
+
+**Data flow:** `maxTotalMs` computed once in `TimelinePanel` and passed as prop to both `TimelineRuler` and each `TrackTimeline` (avoids redundant per-row computation).
+
 ### Domain Toggle
 Custom segmented control styled as LCD sub-display. **Vertical orientation** in the left control column:
 - `flex-col` layout with stacked TIME / BEAT buttons
@@ -407,6 +431,7 @@ TI-92-inspired landscape layout. The entire app is a single calculator body sitt
 │  │▓│ │  [⚙]   │└───────────────────────────┘└─────────────────┘  │▓│ │
 │  │▓│ └─────────┘─────────── border-t ──────────────────────────── │▓│ │
 │  │▓│ │ Timeline │ Track+ │ Notes▾ … │ Load │ Save               │▓│ │
+│  │▓│ │          0s    0.5s    1s    1.5s    2s    (ruler ticks)   │▓│ │
 │  │▓│ │ ■ track rows with drag-and-drop segment chips              │▓│ │
 │  │▓│ │ □ ...                   (■ = LED on, □ = LED off)          │▓│ │
 │  │▓└─└────────────────────────────────────────────────────────────┘▓│ │
@@ -456,7 +481,7 @@ shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]
 Uses the same LCD inset (small) shadow as `surface="lcd"` inputs, creating a consistent "embedded screen" look across all data display elements in the editor.
 
 ### Timeline (bottom)
-`TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `groove border-t border-border/50` (plastic mold seam + border). The "Timeline" label is merged into the `EditorControls` bar — no separate header row.
+`TimelinePanel` contains the `DragDropContext` wrapping `EditorControls` + scrollable track rows. Separated from upper region by `groove border-t border-border/50` (plastic mold seam + border). The "Timeline" label is merged into the `EditorControls` bar — no separate header row. A `TimelineRuler` sits at the top of the scrollable track area (above track rows, below `EditorControls`), showing time-scale tick marks aligned with the segment chip area.
 
 ---
 

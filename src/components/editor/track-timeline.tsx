@@ -4,17 +4,12 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useComposition } from '../../context/CompositionContext';
 
-export default function TrackTimeline({ rowIndex }: { rowIndex: number }) {
+export default function TrackTimeline({ rowIndex, maxTotalMs }: { rowIndex: number; maxTotalMs: number }) {
   const { state, dispatch } = useComposition();
   const segments = state.timelines[rowIndex].segments;
   const selectedSegment = state.selectedSegment;
 
-  // Compute max total duration across all tracks so shorter tracks get a trailing spacer
   const trackTotalMs = segments.reduce((sum, s) => sum + Math.max(s.length.value, 1), 0);
-  const maxTotalMs = state.timelines.reduce(
-    (max, tl) => Math.max(max, tl.segments.reduce((sum, s) => sum + Math.max(s.length.value, 1), 0)),
-    0
-  );
   const remainderMs = maxTotalMs - trackTotalMs;
 
   return (

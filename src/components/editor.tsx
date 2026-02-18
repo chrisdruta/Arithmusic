@@ -1,8 +1,10 @@
+import { useEffect, useRef, useState } from 'react';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 
 import { useComposition } from '../context/CompositionContext';
 import EditorControls from './editor/editor-controls';
 import EditorPanel from './editor/editor-panel';
+import TimelineRuler from './editor/timeline-ruler';
 import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
 import { Led } from './ui/led';
@@ -19,6 +21,22 @@ function reorder(list: Segment[], startIndex: number, endIndex: number): Segment
 export function TimelinePanel() {
   const { state, dispatch } = useComposition();
   const { timelines, selectedSegment } = state;
+
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const [controlsWidth, setControlsWidth] = useState(0);
+
+  useEffect(() => {
+    const el = controlsRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setControlsWidth(el.offsetWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const maxTotalMs = timelines.reduce(
+    (max, tl) => Math.max(max, tl.segments.reduce((sum, s) => sum + Math.max(s.length.value, 1), 0)),
+    0
+  );
 
   const onDragEnd = (result: DropResult) => {
     const sourceDropId = result.source.droppableId;
@@ -86,17 +104,20 @@ export function TimelinePanel() {
       <DragDropContext onDragEnd={onDragEnd}>
         <EditorControls />
         <div className="flex-1 overflow-y-auto pb-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)]">
+          <TimelineRuler maxTotalMs={maxTotalMs} leftOffset={controlsWidth} />
           {timelines.map((_tl, rowIndex) => (
             <div key={rowIndex} className="mt-px flex w-full justify-start border-b border-border/50 bg-surface">
-              <div className="flex w-8 shrink-0 items-center justify-center">
-                <Led
-                  className="size-3"
-                  color={`var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})`}
-                  on={selectedSegment.row === rowIndex}
-                />
+              <div ref={rowIndex === 0 ? controlsRef : undefined} className="flex shrink-0">
+                <div className="flex w-8 shrink-0 items-center justify-center">
+                  <Led
+                    className="size-3"
+                    color={`var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})`}
+                    on={selectedSegment.row === rowIndex}
+                  />
+                </div>
+                <TrackOptions rowIndex={rowIndex} />
               </div>
-              <TrackOptions rowIndex={rowIndex} />
-              <TrackTimeline rowIndex={rowIndex} />
+              <TrackTimeline rowIndex={rowIndex} maxTotalMs={maxTotalMs} />
             </div>
           ))}
         </div>
