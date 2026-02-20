@@ -3,8 +3,6 @@ FROM oven/bun:latest
 ARG TZ
 ENV TZ="$TZ"
 
-ARG CLAUDE_CODE_VERSION=latest
-
 # Install development tools, shell, and firewall dependencies
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,9 +42,9 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhisto
 
 ENV DEVCONTAINER=true
 
-# Create workspace, config, and bun global directories
-RUN mkdir -p /workspace /home/$USERNAME/.claude /home/$USERNAME/.bun/bin /home/$USERNAME/.bun/install/global \
-  && chown -R $USERNAME:$USERNAME /workspace /home/$USERNAME/.claude /home/$USERNAME/.bun
+# Create workspace and config directories
+RUN mkdir -p /workspace /home/$USERNAME/.claude \
+  && chown -R $USERNAME:$USERNAME /workspace /home/$USERNAME/.claude
 
 WORKDIR /workspace
 
@@ -66,12 +64,9 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# Set bun global dir to user-owned location and add to PATH
-ENV BUN_INSTALL_BIN="/home/dev/.bun/bin"
-ENV PATH="/home/dev/.bun/bin:$PATH"
-
-# Install Claude Code globally via bun
-RUN bun install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
+# Install Claude Code via official install script
+RUN curl -fsSL https://claude.ai/install.sh | bash
+ENV PATH=$PATH:/home/dev/.local/bin
 
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
