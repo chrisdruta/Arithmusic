@@ -2,9 +2,15 @@
   "hooks": {
     "PostToolUse": [
       {
-        "tool": "Edit",
-        "command": "tsc --noEmit --pretty 2>&1 | head -20"
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "bun run tsc --noEmit --pretty" }
+        ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bunx ccusage statusline"
   }
 }

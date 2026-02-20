@@ -1,0 +1,51 @@
+{
+  "name": "Arithmusic Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:America/Los_Angeles}",
+      "CLAUDE_CODE_VERSION": "latest"
+    }
+  },
+
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "bash": { "path": "bash", "icon": "terminal-bash" },
+          "zsh": { "path": "zsh" }
+        }
+      }
+    }
+  },
+
+  "remoteUser": "dev",
+
+  "mounts": [
+    "source=arithmusic-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=arithmusic-claude-config-${devcontainerId},target=/home/dev/.claude,type=volume"
+  ],
+
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/dev/.claude"
+  },
+
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+
+  "postCreateCommand": "git config --global core.autocrlf input && bun install",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "waitFor": "postStartCommand",
+
+  "forwardPorts": [5173]
+}
