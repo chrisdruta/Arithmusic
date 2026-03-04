@@ -32,7 +32,8 @@
 
   "mounts": [
     "source=arithmusic-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    "source=arithmusic-claude-config-${devcontainerId},target=/home/dev/.claude,type=volume"
+    "source=arithmusic-claude-config-${devcontainerId},target=/home/dev/.claude,type=volume",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/dev/.gitconfig,type=bind,consistency=cached"
   ],
 
   "containerEnv": {
@@ -42,7 +43,7 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
 
-  "postCreateCommand": "git config --global core.autocrlf input && bun install",
+  "postCreateCommand": "bun install",
   "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
   "waitFor": "postStartCommand",
 
