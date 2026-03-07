@@ -1,13 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-import { Play, Pause, Square, SlidersHorizontal } from 'lucide-react';
+import { Play, Pause, Square, SlidersHorizontal, CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { CompositionProvider, useComposition, computeErrors, exportCompositionJson } from './context/CompositionContext';
 import { SynthesizeComposition } from './lib/synthesize';
 import Graph from './components/graph';
 import { TimelinePanel, SegmentPanel } from './components/editor';
-import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
+import { SaveModal, LoadModal, SettingsModal, AlertModal, TutorialModal } from './components/modals';
 import DomainToggle from './components/editor/domain-toggle';
 
 const RANDOM_TAG_LINES = [
@@ -221,6 +221,14 @@ function AppContent() {
             <Button variant="calc-secondary" size="icon" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'settings' })}>
               <SlidersHorizontal className="size-5" />
             </Button>
+
+            <div className="w-12 border-t border-border/40" />
+
+            {/* Help / Tutorial */}
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">Help</span>
+            <Button variant="calc-secondary" size="icon" onClick={() => window.dispatchEvent(new Event('open-tutorial'))}>
+              <CircleHelp className="size-5" />
+            </Button>
           </div>
 
           {/* Graph (dominant LCD screen) */}
@@ -244,6 +252,7 @@ function AppContent() {
       <SaveModal />
       <SettingsModal />
       <AlertModal />
+      <TutorialModal />
     </div>
   );
 }
